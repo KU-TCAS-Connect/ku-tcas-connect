@@ -1,0 +1,8 @@
+FlagEmbedding
+torch
+transformers
+spicy
+qdrant_client
+python-dotenv
+pandas
+openai

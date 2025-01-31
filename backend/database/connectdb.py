@@ -35,9 +35,9 @@ class VectorStore:
                     index=self.qdrant_model.SparseIndexParams(on_disk=False)
                 )
             },
-            )
+        )
         print(f"Collection '{self.col_setting.collection_name}' created successfully.")
 
 
-    def uuid_from_time(self,timestamp):
+    def uuid_from_time(self, timestamp):
         return uuid.uuid5(uuid.NAMESPACE_DNS, timestamp.isoformat())

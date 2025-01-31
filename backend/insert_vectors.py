@@ -24,19 +24,23 @@ def process_and_insert_data(df):
         admission_program = row.get('program_type', 'N/A')
         content = row.get('content', 'N/A')
 
-        try:
-            embedding = ast.literal_eval(row['ada_embedding'])
-            if not isinstance(embedding, list):
-                raise ValueError("Embedding is not a valid list")
-        except (ValueError, SyntaxError) as e:
-            print(f"Error parsing embedding for row {row['สาขาวิชา']}: {e}")
-            continue 
+        # try:
+        #     embedding = ast.literal_eval(row['ada_embedding'])
+        #     if not isinstance(embedding, list):
+        #         raise ValueError("Embedding is not a valid list")
+        # except (ValueError, SyntaxError) as e:
+        #     print(f"Error parsing embedding for row {row['สาขาวิชา']}: {e}")
+        #     continue 
 
         # Use BGEM3 to generate dense and sparse vectors
         sentences_1 = [content]  # Use the content of the row for encoding
 
         output_1 = model.encode(sentences_1, return_dense=True, return_sparse=True, return_colbert_vecs=False)
 
+        dense_vector = output_1['dense_vecs'][0]
+        
+        print(dense_vector)
+        
         # Extract the lexical weights (this is your sparse representation)
         lexical_weights = output_1['lexical_weights'][0]
         # Convert the lexical weights into a dictionary (index: weight)
@@ -52,14 +56,13 @@ def process_and_insert_data(df):
                 "created_at": datetime.now().isoformat(),
             },
             "contents": content,
-            "embedding": embedding,
+            "embedding": dense_vector,
         }
 
         # Prepare the sparse vector: list of indices and values for sparse vector
         indices = list(sparse_vector_dict.keys())  # Indices of the sparse vector
-        values = list(sparse_vector_dict.values())  # Values of the sparse vector
-        native_floats = [float(x) for x in values]
-        new_dict = dict(zip(indices, native_floats))
+        values = [float(x) for x in list(sparse_vector_dict.values())]
+        sparse_vector = dict(zip(indices, values))
         # Create the point with the embedding and sparse vector
         point = PointStruct(
             id=data["id"],
@@ -67,7 +70,7 @@ def process_and_insert_data(df):
                 "": data["embedding"],  # Dense vector
                 "keywords": vector_class.qdrant_model.SparseVector(  # Sparse vector with "keywords"
                     indices=indices,  # List of indices
-                    values=native_floats  # List of values
+                    values=values  # List of values
                 ),
             },
             payload={
@@ -77,7 +80,7 @@ def process_and_insert_data(df):
                 "reference": data["metadata"]["reference"],
                 "created_at": data["metadata"]["created_at"],
                 "contents": data["contents"],
-                "lexical_weights": new_dict,  # Store sparse vector in payload
+                "lexical_weights": sparse_vector,  # Store sparse vector in payload
             },
         )
 
@@ -85,7 +88,6 @@ def process_and_insert_data(df):
         print(point)
         print("-------------------------------------------------------")
         points.append(point)
-
     if points:
         client.upsert(
             collection_name=vector_class.col_setting.collection_name,
@@ -96,9 +98,13 @@ def process_and_insert_data(df):
         print("No records were inserted due to embedding failures.")
 
 if __name__ == "__main__":
-    # vector_class.create_collection()  # Uncomment if you want to create the collection
+    create_collection_table = False # Change to true to create new table
+    
+    if create_collection_table:
+        vector_class.create_collection()
+
     csv_list_file = [
-        '1-0-เรียนล่วงหน้า.csv',
+        # '1-0-เรียนล่วงหน้า.csv',
         # '1-1-ช้างเผือก.csv',
         # '1-1-นานาชาติและภาษาอังกฤษ.csv',
         # '1-1-รับนักกีฬาดีเด่น.csv',

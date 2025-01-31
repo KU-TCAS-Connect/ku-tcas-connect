@@ -98,26 +98,26 @@ def process_and_insert_data(df):
         print("No records were inserted due to embedding failures.")
 
 if __name__ == "__main__":
-    create_collection_table = False # Change to true to create new table
+    create_collection_table = True # Change to true to create new table
     
     if create_collection_table:
         vector_class.create_collection()
 
     csv_list_file = [
-        # '1-0-เรียนล่วงหน้า.csv',
-        # '1-1-ช้างเผือก.csv',
-        # '1-1-นานาชาติและภาษาอังกฤษ.csv',
-        # '1-1-รับนักกีฬาดีเด่น.csv',
-        # '1-2-ช้างเผือก.csv',
-        # '1-2-โอลิมปิกวิชาการ.csv',
-        # '2-0-MOU.csv',
-        # '2-0-โควต้า30จังหวัด.csv',
-        # '2-0-เพชรนนทรี.csv',
-        # '2-0-ลูกพระพิรุณ.csv',
-        # '2-0-นานาชาติและภาษาอังกฤษ.csv',
-        # '2-0-ผู้มีความสามารถทางกีฬา.csv',
-        # '2-0-นักเรียนดีเด่นจากโรงเรียนสาธิตแห่งมหาวิทยาลัยเกษตรศาสตร์.csv',
-        # '3-0-Admission.csv',
+        '1-0-เรียนล่วงหน้า.csv',
+        '1-1-ช้างเผือก.csv',
+        '1-1-นานาชาติและภาษาอังกฤษ.csv',
+        '1-1-รับนักกีฬาดีเด่น.csv',
+        '1-2-ช้างเผือก.csv',
+        '1-2-โอลิมปิกวิชาการ.csv',
+        '2-0-MOU.csv',
+        '2-0-โควต้า30จังหวัด.csv',
+        '2-0-เพชรนนทรี.csv',
+        '2-0-ลูกพระพิรุณ.csv',
+        '2-0-นานาชาติและภาษาอังกฤษ.csv',
+        '2-0-ผู้มีความสามารถทางกีฬา.csv',
+        '2-0-นักเรียนดีเด่นจากโรงเรียนสาธิตแห่งมหาวิทยาลัยเกษตรศาสตร์.csv',
+        '3-0-Admission.csv',
     ]
     for file in csv_list_file:
         df = read_csv_data(f"data/{file}") 

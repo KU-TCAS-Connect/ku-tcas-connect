@@ -55,7 +55,7 @@ def generate_bge_embedding(text):
         return None
 
 #################### Main ####################
-query = "อยากทราบกำหนดการการประกาศผลผู้ผ่านการคัดเลือก"
+query = "อยากทราบเกณฑ์วิศวซอฟต์แวร์และความรู้รอบ 1"
 query_indices, query_values = compute_sparse_vector(query)
 
 search_result = client.query_points(

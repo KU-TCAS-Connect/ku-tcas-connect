@@ -1,14 +1,15 @@
-import openai
+from openai import OpenAI
 
 from config.settings import OpenAISettings
 
 class OpenaiModel:
     def __init__(self):
         self.openai_setting = OpenAISettings()
+        self.openai = OpenAI(api_key=self.openai_setting.api_kay)
         
     def generate_openai_embedding(self, text):
         try:
-            response = openai.embeddings.create(
+            response = self.openai.embeddings.create(
                 input=text,
                 model="text-embedding-3-small"
             )

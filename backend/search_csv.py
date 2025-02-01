@@ -10,6 +10,10 @@ import ast
 
 from database.connectdb import VectorStore
 from services.llm_bge import FlagModel
+import torch
+
+device = "cuda(GPU)" if torch.cuda.is_available() else "CPU"
+print(f"Using device: {device}")
 
 load_dotenv()
 
@@ -27,35 +31,42 @@ bge_model = BGEM3FlagModel('BAAI/bge-m3', use_fp16=True)
 
 def compute_sparse_vector(text):
     sentences_1 = [text]  # Use the content of the row for encoding
-    output_1 = model.encode(sentences_1, return_dense=True, return_sparse=True, return_colbert_vecs=False)
-    
-    # Extract the lexical weights (this is your sparse representation)
+    output_1 = model.encode(
+        sentences_1, 
+        return_dense=True, 
+        return_sparse=True, 
+        return_colbert_vecs=False
+    )
+
     lexical_weights = output_1['lexical_weights'][0]
 
-    # Convert the lexical weights into a dictionary (index: weight)
     sparse_vector_dict = {token: weight for token, weight in lexical_weights.items()}
 
-    indices = list(sparse_vector_dict.keys())  # Indices of the sparse vector
+    indices = list(sparse_vector_dict.keys())
     values = [float(x) for x in list(sparse_vector_dict.values())]
-    sparse_vector = dict(zip(indices, values))
+
     return indices, values
 
 def generate_bge_embedding(text):
     try:
-        # Generate dense embedding using BGE model
-        sentences_1 = [text]  # The content you want to encode
-        output_1 = model.encode(sentences_1, return_dense=True, return_sparse=False, return_colbert_vecs=False)
+        sentences_1 = [text]
+        
+        output_1 = model.encode(
+            sentences_1, 
+            return_dense=True, 
+            return_sparse=False, 
+            return_colbert_vecs=False
+        )
 
-        # Extract the dense vector (embedding)
-        dense_vector = output_1['dense_vecs'][0]
+        dense_vector = torch.tensor(output_1['dense_vecs'][0], device=device)  # Move to GPU
 
-        return dense_vector
+        return dense_vector.cpu().numpy()  # Convert back to NumPy before sending to Qdrant
     except Exception as e:
         print(f"Error generating embedding: {e}")
         return None
 
 #################### Main ####################
-query = "อยากทราบเกณฑ์วิศวซอฟต์แวร์และความรู้รอบ 1"
+query = "วิศวเครื่องกล อินเตอร์ มีเกณฑ์ยังไงบ้าง"
 query_indices, query_values = compute_sparse_vector(query)
 
 search_result = client.query_points(

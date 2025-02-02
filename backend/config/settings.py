@@ -15,6 +15,6 @@ class DatabaseSetting:
     service_url:str = os.getenv("QDRANT_URL")
 
 class CollectionSetting:
-    collection_name:str = "kutcas_csv"
+    collection_name:object = {"csv":"kutcas_csv", "txt": "kutcas_txt"}
     vector_size:int = 1024
     vector_distance:str = "cosine"

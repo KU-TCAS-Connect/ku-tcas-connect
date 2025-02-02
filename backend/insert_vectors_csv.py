@@ -90,7 +90,7 @@ def process_and_insert_data(df):
         points.append(point)
     if points:
         client.upsert(
-            collection_name=vector_class.col_setting.collection_name,
+            collection_name=vector_class.col_setting.collection_name["csv"],
             points=points
         )
         print(f"Inserted {len(points)} records into Qdrant.")
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     create_collection_table = True # Change to true to create new table
     
     if create_collection_table:
-        vector_class.create_collection()
+        vector_class.create_collection(vector_class.col_setting.collection_name["csv"])
 
     csv_list_file = [
         '1-0-เรียนล่วงหน้า.csv',

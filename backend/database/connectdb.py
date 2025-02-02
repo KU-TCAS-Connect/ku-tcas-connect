@@ -1,7 +1,6 @@
 import uuid
-from datetime import datetime
 from qdrant_client import QdrantClient, models
-from qdrant_client.models import PointStruct, Distance, VectorParams
+from qdrant_client.models import Distance, VectorParams
 
 from config.settings import DatabaseSetting, CollectionSetting
 
@@ -15,7 +14,7 @@ class VectorStore:
     def get_embedding(self):
         pass
 
-    def create_collection(self):
+    def create_collection(self, col_name):
         vector_distance = Distance.COSINE # set default
         if self.col_setting.vector_distance == "euclid":
             vector_distance = Distance.EUCLID
@@ -25,7 +24,7 @@ class VectorStore:
             vector_distance = Distance.MANHATTAN
 
         self.qdrant_client.create_collection(
-            collection_name=self.col_setting.collection_name,
+            collection_name=col_name,
             vectors_config=VectorParams(
                 size=self.col_setting.vector_size,  # Size for the dense vector (for example)
                 distance=vector_distance

@@ -70,7 +70,7 @@ query = "วิศวเครื่องกล อินเตอร์ มี
 query_indices, query_values = compute_sparse_vector(query)
 
 search_result = client.query_points(
-    collection_name=vector_class.col_setting.collection_name,
+    collection_name=vector_class.col_setting.collection_name["csv"],
     prefetch=[
         models.Prefetch(
             query=models.SparseVector(indices=query_indices, values=query_values),

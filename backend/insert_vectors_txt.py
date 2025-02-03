@@ -196,7 +196,7 @@ if __name__ == "__main__":
     for file in txt_list_file:
         admission_info = admission_info_mapping.get(file)
         if admission_info:  # Check if the file is mapped to admission info
-            with open(f"output/txt/content/{file}", "r", encoding="utf-8") as f:
+            with open(f"data/{file}", "r", encoding="utf-8") as f:
                 content = f.read()
             
             # Assuming you want to process the content as part of the DataFrame

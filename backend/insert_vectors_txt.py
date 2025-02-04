@@ -130,10 +130,15 @@ if __name__ == "__main__":
             'admission_program': "โครงการรับนักกีฬาดีเด่น",
             'reference':"https://admission.ku.ac.th/media/announcements/2024/10/03/68-TCAS1-Sport_1.1.pdf"
         },
-        '68-TCAS1-White_Elephant.txt': {
-            'admission_round': "1",
+        '68-TCAS1-White_Elephant1.txt': {
+            'admission_round': "1/1",
             'admission_program': "โครงการช้างเผือก",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/02/68_TCAS1_White_Elephant_1.1.pdf"
+        },
+        '68-TCAS1-White_Elephant2.txt': {
+            'admission_round': "1/2",
+            'admission_program': "โครงการช้างเผือก",
+            'reference': "https://admission.ku.ac.th/media/announcements/2024/10/07/68_TCAS1_White_Elephant_1.2.pdf"
         },
         '68-TCAS2-Diamond_Nontri.txt': {
             'admission_round': "1",
@@ -182,7 +187,8 @@ if __name__ == "__main__":
         '68-TCAS1-International_Program.txt',
         '68-TCAS1-Olympics.txt',
         '68-TCAS1-Sport.txt',
-        '68-TCAS1-White_Elephant.txt',
+        '68-TCAS1-White_Elephant1.txt',
+        '68-TCAS1-White_Elephant2.txt',
         '68-TCAS2-Diamond_Nontri.txt',
         '68-TCAS2-International_Program.txt',
         '68-TCAS2-KU_MOU.txt',

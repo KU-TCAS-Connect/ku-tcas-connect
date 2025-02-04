@@ -40,3 +40,6 @@ class VectorStore:
 
     def uuid_from_time(self, timestamp):
         return uuid.uuid5(uuid.NAMESPACE_DNS, timestamp.isoformat())
+    
+    def uuid_from_time_with_index(self, timestamp, index):
+        return uuid.uuid5(uuid.NAMESPACE_DNS, f"{timestamp.isoformat()}_{index}")

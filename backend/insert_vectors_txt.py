@@ -53,7 +53,7 @@ def process_and_insert_data(df, admission_info):
             dense_vector = output_1['dense_vecs'][i]
 
             data = {
-                "id": str(vector_class.uuid_from_time(datetime.now(), i)),
+                "id": str(vector_class.uuid_from_time_with_index(datetime.now(), i)),
                 "metadata": {
                     "admission_round": admission_round,
                     "admission_program": admission_program,

@@ -89,7 +89,9 @@ def create_dataframe_from_results(results) -> pd.DataFrame:
     return df
 
 #################### Main ####################
-query = "วิศวเครื่องกล รอบ 1 นานาชาติ มีเกณฑ์ยังไงบ้าง"
+chat_history = []  # Initialize chat history
+
+query = "วิศวเครื่องกล รอบ 1 ภาคภาษอังกฤษ นานาชาติ มีเกณฑ์ยังไงบ้าง"
 query_indices, query_values = compute_sparse_vector(query)
 
 search_result = client.query_points(
@@ -109,13 +111,15 @@ search_result = client.query_points(
     query=models.FusionQuery(fusion=models.Fusion.RRF),
 )
 
-# Print the search results
+#################### Print the search results (Retrieve Document) ####################
+print("#################### Print the search results (Retrieve Document) ####################")
 for result in search_result.points:
     print(f"Score: {result.score}")
     print(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""")
     print("---------------------------------")
 
-
+################### QuestionExtraction ####################
+print("################### QuestionExtraction ####################")
 thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
 print(f"Extract from User Question using LLM Question Checker")
 print(thought_process)
@@ -124,5 +128,22 @@ print(f"Round: {round_}")
 print(f"Program: {program}")
 print(f"Program Type: {program_type}")
 
-response = Synthesizer.generate_response(question=query, context=create_dataframe_from_results(search_result))
-print("Answer", response)
+#################### Generate Answer by LLM ####################
+print("#################### Generate Answer by LLM ####################")
+print("First Question")
+# First question
+response1 = Synthesizer.generate_response(
+    question="วิศวเครื่องกล อินเตอร์ มีเกณฑ์ยังไงบ้าง", 
+    context=create_dataframe_from_results(search_result), 
+    history=chat_history
+)
+print("Answer First Question", response1.answer)
+
+# Second question (same chat session, keeps context)
+print("Second Question")
+response2 = Synthesizer.generate_response(
+    question="แล้วค่าเทอมเท่าไหร่?", 
+    context=create_dataframe_from_results(search_result), 
+    history=chat_history  # Keeps previous messages
+)
+print("Answer Secodn Question", response2.answer)

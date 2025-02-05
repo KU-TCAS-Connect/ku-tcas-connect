@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 import pandas as pd
 from pydantic import BaseModel, Field
 from services.llm_factory import LLMFactory
@@ -17,10 +17,10 @@ class SynthesizedResponse(BaseModel):
 class Synthesizer:
     SYSTEM_PROMPT = """
     # Role and Purpose
-    You are an AI assistant chatbot for FAQ system for Kasetsart University in Thailand. Your task is to synthesize a coherent and helpful answer 
-    based on the given question and relevant context retrieved from a knowledge database. If the user ask in Thai language please answer the question in Thai.
-    But if the user ask in English please answer the question in English.
-    
+    You are an AI assistant chatbot for an FAQ system for Kasetsart University in Thailand. Your task is to synthesize a coherent and helpful answer 
+    based on the given question and relevant context retrieved from a knowledge database. If the user asks in Thai language, please answer the question in Thai.
+    But if the user asks in English, please answer the question in English.
+
     # Guidelines:
     1. Provide a clear and concise answer to the question.
     2. Use only the information from the relevant context to support your answer.
@@ -30,32 +30,40 @@ class Synthesizer:
     6. If you cannot answer the question based on the given context, clearly state that.
     7. Maintain a helpful and professional tone appropriate for customer service.
     8. Adhere strictly to company guidelines and policies by using only the provided knowledge base.
-    
+
     Review the question from the user:
     """
 
     @staticmethod
-    def generate_response(question: str, context: pd.DataFrame) -> SynthesizedResponse:
-        """Generates a synthesized response based on the question and context.
+    def generate_response(
+        question: str, 
+        context: pd.DataFrame, 
+        history: List[Dict[str, str]] = None
+    ) -> SynthesizedResponse:
+        """Generates a synthesized response based on the question, context, and chat history.
 
         Args:
             question: The user's question.
             context: The relevant context retrieved from the knowledge base.
+            history: Previous chat messages to maintain conversation context.
 
         Returns:
             A SynthesizedResponse containing thought process and answer.
         """
 
-        
-        # print("head", context.head()) # For Debug
-        # print("col", context.columns) # For Debug
-        
+        if history is None:
+            history = []
+
+        # Convert DataFrame to JSON string for context
         context_str = Synthesizer.dataframe_to_json(
             context, columns_to_keep=["content", "reference"]
         )
         print("context_str", context_str)
+
+        # Construct message history with previous exchanges
         messages = [
             {"role": "system", "content": Synthesizer.SYSTEM_PROMPT},
+        ] + history + [  # Add previous chat history
             {"role": "user", "content": f"# User question:\n{question}"},
             {
                 "role": "assistant",
@@ -63,19 +71,25 @@ class Synthesizer:
             },
         ]
 
+        # Call the LLM
         llm = LLMFactory("openai")
-        return llm.create_completion(
+        response = llm.create_completion(
             response_model=SynthesizedResponse,
             messages=messages,
         )
+
+        # Update history with latest conversation
+        history.append({"role": "user", "content": question})
+        history.append({"role": "assistant", "content": response.answer})
+
+        return response
 
     @staticmethod
     def dataframe_to_json(
         context: pd.DataFrame,
         columns_to_keep: List[str],
     ) -> str:
-        """
-        Convert the context DataFrame to a JSON string.
+        """Convert the context DataFrame to a JSON string.
 
         Args:
             context (pd.DataFrame): The context DataFrame.

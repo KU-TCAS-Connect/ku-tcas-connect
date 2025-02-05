@@ -3,7 +3,7 @@ from openai import OpenAI
 from pydantic import BaseModel, Field
 from typing import Optional, Tuple, List
 from typing import Any, Dict, Type
-# from services.llm_factory import LLMFactory
+from services.llm_factory import LLMFactory
 
 class QuestionExtractionResponse(BaseModel):
     thought_process: List[str] = Field(
@@ -98,8 +98,8 @@ class QuestionExtraction:
 
     @staticmethod
     def extract(text, template) -> Tuple[List[str], str, int, str, str]:
-        # llm = LLMFactory("openai")
-        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        llm = LLMFactory("openai")
+        # client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
         # llm_response = client.chat.completions.create(
         #     model="gpt-3.5-turbo",
@@ -112,26 +112,25 @@ class QuestionExtraction:
         #     temperature=0.1,
         #     response_model=template,
         # )
-        completion_params = {
-            "model": "gpt-3.5-turbo",
-            "temperature": 0.1,
-            # "max_retries": 3,
-            "max_tokens": 3000,
-            "response_model": template,
-            "messages":[
-                {"role": "system", "content": QuestionExtraction.SYSTEM_PROMPT},
-                {"role": "user", "content": "Extract: " + text},            
-            ],
-        }
-        # print(completion_params)
-        llm_response = client.chat.completions.create(**completion_params)
-        # llm_response = self.create_completion(
-        #     messages=[
+        
+        # completion_params = {
+        #     "model": "gpt-3.5-turbo",
+        #     "temperature": 0.1,
+        #     # "max_retries": 3,
+        #     "max_tokens": 3000,
+        #     "response_model": template,
+        #     "messages":[
         #         {"role": "system", "content": QuestionExtraction.SYSTEM_PROMPT},
-        #         {"role": "user", "content": "Extract: " + text},
+        #         {"role": "user", "content": "Extract: " + text},            
         #     ],
-        #     response_model=template,
-        # )
+        # }
+        llm_response = llm.create_completion(
+            messages=[
+                {"role": "system", "content": QuestionExtraction.SYSTEM_PROMPT},
+                {"role": "user", "content": "Extract: " + text},
+            ],
+            response_model=template,
+        )
         thought_process = llm_response.thought_process
         major = llm_response.major
         round_ = llm_response.round

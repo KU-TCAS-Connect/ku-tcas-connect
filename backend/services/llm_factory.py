@@ -5,7 +5,7 @@ import instructor
 from openai import OpenAI
 from pydantic import BaseModel
 
-from config.settings import OpenAISettings, get_settings
+from config.settings import OpenAISettings
 
 
 # Configure logging
@@ -45,5 +45,5 @@ class LLMFactory:
             "response_model": response_model,
             "messages": messages,
         }
-
+        # print(completion_params)
         return self.client.chat.completions.create(**completion_params)

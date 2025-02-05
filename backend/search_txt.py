@@ -5,7 +5,9 @@ from qdrant_client.models import Filter, FieldCondition, MatchValue
 from FlagEmbedding import BGEM3FlagModel
 
 from database.connectdb import VectorStore
-from backend.services.bge_embedding import FlagModel
+from services.bge_embedding import FlagModel
+from services.llm_synthesizer import Synthesizer
+import pandas as pd
 
 load_dotenv()
 
@@ -41,7 +43,7 @@ def generate_bge_embedding(text):
     try:
         # Generate dense embedding using BGE model
         sentences_1 = [text]  # The content you want to encode
-        output_1 = bge_model.encode(sentences_1, return_dense=True, return_sparse=False, return_colbert_vecs=False)
+        output_1 = bge_model.encode(sentences_1, return_dense=True, return_sparse=True, return_colbert_vecs=False)
 
         # Extract the dense vector (embedding)
         dense_vector = output_1['dense_vecs'][0]
@@ -67,8 +69,29 @@ def search_similar_vectors(query_text, top_k=5):
     for result in search_results:
         print(f"Found ID: {result.id}, Score: {result.score}, Metadata: {result.payload}")
 
+def create_dataframe_from_results(results) -> pd.DataFrame:
+    data = []
+    for result in results.points:
+        row = {
+            "id": result.id,
+            "score": result.score,
+            "admission_program": result.payload.get("admission_program", ""),
+            "content": result.payload.get("contents", ""),
+            "reference": result.payload.get("reference", ""),
+        }
+        data.append(row)
 
-query = "อยากทราบกำหนดการการประกาศผลผู้ผ่านการคัดเลือก"
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
+
+    # Convert id to string for better readability
+    df["id"] = df["id"].astype(str)
+
+    # Display the DataFrame
+    return df
+
+#################### Main ####################
+query = "อยากทราบกำหนดการการประกาศผลผู้ผ่านการคัดเลือก "
 query_indices, query_values = compute_sparse_vector(query)
 
 search_result = client.query_points(
@@ -77,19 +100,23 @@ search_result = client.query_points(
         models.Prefetch(
             query=models.SparseVector(indices=query_indices, values=query_values),
             using="keywords",
-            limit=5,
+            limit=3,
         ),
         models.Prefetch(
             query=generate_bge_embedding(query),  # <-- dense vector using BGE model
             using="",
-            limit=5,
+            limit=3,
         ),
     ],
     query=models.FusionQuery(fusion=models.Fusion.RRF),
 )
+
 
 # Print the search results
 for result in search_result.points:
     print(f"Score: {result.score}")
     print(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""")
     print("---------------------------------")
+
+response = Synthesizer.generate_response(question=query, context=create_dataframe_from_results(search_result))
+print("Answer", response)

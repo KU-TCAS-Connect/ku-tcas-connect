@@ -20,8 +20,6 @@ class Synthesizer:
     You are an AI assistant chatbot for FAQ system for Kasetsart University in Thailand. Your task is to synthesize a coherent and helpful answer 
     based on the given question and relevant context retrieved from a knowledge database. If the user ask in Thai language please answer the question in Thai.
     But if the user ask in English please answer the question in English.
-
-    If the user dose not provide a admission round please ask the user to provide a admission round first.
     
     # Guidelines:
     1. Provide a clear and concise answer to the question.
@@ -47,10 +45,15 @@ class Synthesizer:
         Returns:
             A SynthesizedResponse containing thought process and answer.
         """
-        context_str = Synthesizer.dataframe_to_json(
-            context, columns_to_keep=["content"]
-        )
 
+        
+        # print("head", context.head()) # For Debug
+        # print("col", context.columns) # For Debug
+        
+        context_str = Synthesizer.dataframe_to_json(
+            context, columns_to_keep=["content", "reference"]
+        )
+        print("context_str", context_str)
         messages = [
             {"role": "system", "content": Synthesizer.SYSTEM_PROMPT},
             {"role": "user", "content": f"# User question:\n{question}"},
@@ -81,4 +84,4 @@ class Synthesizer:
         Returns:
             str: A JSON string representation of the selected columns.
         """
-        return context[columns_to_keep].to_json(orient="records", indent=2)
+        return context[columns_to_keep].to_json(orient="records", force_ascii=False, indent=2)

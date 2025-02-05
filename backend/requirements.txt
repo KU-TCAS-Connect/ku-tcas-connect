@@ -6,3 +6,4 @@ qdrant_client
 python-dotenv
 pandas
 openai
+instructor

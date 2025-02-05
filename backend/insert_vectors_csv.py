@@ -4,7 +4,7 @@ from qdrant_client.models import PointStruct
 import ast
 
 from database.connectdb import VectorStore
-from backend.services.bge_embedding import FlagModel
+from services.bge_embedding import FlagModel
 
 
 vector_class = VectorStore()

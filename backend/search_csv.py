@@ -8,8 +8,10 @@ from datetime import datetime
 import pandas as pd
 import ast
 
+from services.llm_synthesizer import Synthesizer
 from database.connectdb import VectorStore
-from backend.services.bge_embedding import FlagModel
+from services.bge_embedding import FlagModel
+from services.question_extraction import QuestionExtraction, QuestionExtractionResponse
 import torch
 
 device = "cuda(GPU)" if torch.cuda.is_available() else "CPU"
@@ -54,7 +56,7 @@ def generate_bge_embedding(text):
         output_1 = model.encode(
             sentences_1, 
             return_dense=True, 
-            return_sparse=False, 
+            return_sparse=True, 
             return_colbert_vecs=False
         )
 
@@ -65,8 +67,29 @@ def generate_bge_embedding(text):
         print(f"Error generating embedding: {e}")
         return None
 
+def create_dataframe_from_results(results) -> pd.DataFrame:
+    data = []
+    for result in results.points:
+        row = {
+            "id": result.id,
+            "score": result.score,
+            "admission_program": result.payload.get("admission_program", ""),
+            "content": result.payload.get("contents", ""),
+            "reference": result.payload.get("reference", ""),
+        }
+        data.append(row)
+
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
+
+    # Convert id to string for better readability
+    df["id"] = df["id"].astype(str)
+
+    # Display the DataFrame
+    return df
+
 #################### Main ####################
-query = "วิศวเครื่องกล อินเตอร์ มีเกณฑ์ยังไงบ้าง"
+query = "วิศวเครื่องกล รอบ 1 นานาชาติ มีเกณฑ์ยังไงบ้าง"
 query_indices, query_values = compute_sparse_vector(query)
 
 search_result = client.query_points(
@@ -75,12 +98,12 @@ search_result = client.query_points(
         models.Prefetch(
             query=models.SparseVector(indices=query_indices, values=query_values),
             using="keywords",
-            limit=5,
+            limit=1,
         ),
         models.Prefetch(
             query=generate_bge_embedding(query),  # <-- dense vector using BGE model
             using="",
-            limit=5,
+            limit=1,
         ),
     ],
     query=models.FusionQuery(fusion=models.Fusion.RRF),
@@ -91,3 +114,15 @@ for result in search_result.points:
     print(f"Score: {result.score}")
     print(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""")
     print("---------------------------------")
+
+
+thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
+print(f"Extract from User Question using LLM Question Checker")
+print(thought_process)
+print(f"Major: {major}")
+print(f"Round: {round_}")
+print(f"Program: {program}")
+print(f"Program Type: {program_type}")
+
+response = Synthesizer.generate_response(question=query, context=create_dataframe_from_results(search_result))
+print("Answer", response)

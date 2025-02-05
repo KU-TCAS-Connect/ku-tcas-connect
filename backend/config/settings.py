@@ -1,15 +1,18 @@
 import os
 from dotenv import load_dotenv
+from typing import Optional
 
 load_dotenv(dotenv_path="./.env")
 
 class LLMSettings:
-    max_token: int = 3
+    temperature: float = 0.1
+    max_tokens: Optional[int] = 3000
+    max_retries: int = 3
 
-class OpenAISettings:
-    api_kay: str = os.getenv("OPENAI_API_KEY")
-    default_model: str = os.getenv("DEFAULT_MODEL")
-    embedding_model: str = os.getenv("EMBEDDING_MODEL")
+class OpenAISettings(LLMSettings):
+    api_key: str = os.getenv("OPENAI_API_KEY")
+    default_model: str = "gpt-3.5-turbo"
+    embedding_model: str = "text-embedding-3-small"
 
 class DatabaseSetting:
     service_url:str = os.getenv("QDRANT_URL")

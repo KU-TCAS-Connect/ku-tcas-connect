@@ -9,7 +9,7 @@ import pandas as pd
 import ast
 
 from database.connectdb import VectorStore
-from services.llm_bge import FlagModel
+from backend.services.bge_embedding import FlagModel
 import torch
 
 device = "cuda(GPU)" if torch.cuda.is_available() else "CPU"

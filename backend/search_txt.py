@@ -5,7 +5,7 @@ from qdrant_client.models import Filter, FieldCondition, MatchValue
 from FlagEmbedding import BGEM3FlagModel
 
 from database.connectdb import VectorStore
-from services.llm_bge import FlagModel
+from backend.services.bge_embedding import FlagModel
 
 load_dotenv()
 

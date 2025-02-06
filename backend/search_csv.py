@@ -8,6 +8,7 @@ from datetime import datetime
 import pandas as pd
 import ast
 
+from services.llm_retrieve_filter import RetrieveFilter
 from services.llm_synthesizer import Synthesizer
 from database.connectdb import VectorStore
 from services.bge_embedding import FlagModel
@@ -89,34 +90,49 @@ def create_dataframe_from_results(results) -> pd.DataFrame:
     return df
 
 #################### Main ####################
-# chat_history = []  # Initialize chat history
+chat_history = []  # Initialize chat history
 
-# query = "วิศวเครื่องกล รอบ 1 ภาคภาษอังกฤษ นานาชาติ มีเกณฑ์ยังไงบ้าง"
-# query_indices, query_values = compute_sparse_vector(query)
+query = "วิศวเครื่องกล ภาคไทย มีเกณฑ์ยังไงบ้าง"
+query_indices, query_values = compute_sparse_vector(query)
 
-# search_result = client.query_points(
-#     collection_name=vector_class.col_setting.collection_name["csv"],
-#     prefetch=[
-#         models.Prefetch(
-#             query=models.SparseVector(indices=query_indices, values=query_values),
-#             using="keywords",
-#             limit=1,
-#         ),
-#         models.Prefetch(
-#             query=generate_bge_embedding(query),  # <-- dense vector using BGE model
-#             using="",
-#             limit=1,
-#         ),
-#     ],
-#     query=models.FusionQuery(fusion=models.Fusion.RRF),
-# )
+search_result = client.query_points(
+    collection_name=vector_class.col_setting.collection_name["csv"],
+    prefetch=[
+        models.Prefetch(
+            query=models.SparseVector(indices=query_indices, values=query_values),
+            using="keywords",
+            limit=3,
+        ),
+        models.Prefetch(
+            query=generate_bge_embedding(query),  # <-- dense vector using BGE model
+            using="",
+            limit=3,
+        ),
+    ],
+    query=models.FusionQuery(fusion=models.Fusion.RRF),
+)
 
-#################### Print the search results (Retrieve Document) ####################
-# print("#################### Print the search results (Retrieve Document) ####################")
-# for result in search_result.points:
-#     print(f"Score: {result.score}")
-#     print(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""")
-#     print("---------------------------------")
+################### Print the search results (Retrieve Document) ####################
+print("#################### Print the search results (Retrieve Document) ####################")
+for result in search_result.points:
+    print(f"Score: {result.score}")
+    print(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""")
+    print("---------------------------------")
+
+# Extract retrieved documents from search_result
+document_from_db_before_filter = []
+for result in search_result.points:
+    document_content = f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}"""
+    document_from_db_before_filter.append(document_content)
+
+context_str_after_filtered = RetrieveFilter.filter(query=query, documents=document_from_db_before_filter)
+
+print("#################### Print Filtered Document ####################")
+print("index:\n", context_str_after_filtered.idx)
+print("Filtered Document:\n", context_str_after_filtered.content)
+print("reason:\n", context_str_after_filtered.reject_reasons)
+
+
 
 # ################### QuestionExtraction ####################
 # print("################### QuestionExtraction ####################")
@@ -128,7 +144,7 @@ def create_dataframe_from_results(results) -> pd.DataFrame:
 # print(f"Program: {program}")
 # print(f"Program Type: {program_type}")
 
-# #################### Generate Answer by LLM ####################
+#################### Generate Answer by LLM ####################
 # print("#################### Generate Answer by LLM ####################")
 # print("First Question")
 # # First question

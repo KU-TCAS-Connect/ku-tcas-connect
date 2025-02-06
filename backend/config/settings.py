@@ -11,7 +11,7 @@ class LLMSettings:
 
 class OpenAISettings(LLMSettings):
     api_key: str = os.getenv("OPENAI_API_KEY")
-    default_model: str = "gpt-3.5-turbo"
+    default_model: str = "gpt-4o"
     embedding_model: str = "text-embedding-3-small"
 
 class DatabaseSetting:

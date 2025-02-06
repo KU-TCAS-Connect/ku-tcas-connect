@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-// import ReactDOM from 'react-dom';
-// import './index.css';
+import React, { useState, useEffect } from 'react';
 
 function ChatPage() {
     const [messages, setMessages] = useState([
@@ -8,30 +6,39 @@ function ChatPage() {
         { text: 'Hi, I need some information.', type: 'sent' }
     ]);
     const [input, setInput] = useState('');
+    const [sessionId, setSessionId] = useState('');
+
+    useEffect(() => {
+        const fetchSessionId = async () => {
+            const response = await fetch("http://localhost:8000/new-session");
+            const data = await response.json();
+            setSessionId(data.session_id);  // Store session ID
+        };
+
+        fetchSessionId();
+    }, []);
 
     const sendMessage = async () => {
         if (input.trim() !== '') {
-            // setMessages([...messages, { text: input, type: 'sent' }]);
             setMessages((prevMessages) => [...prevMessages, { text: input, type: 'sent' }]);
             setInput('');
 
-            // console.log("Sending payload:", { query: input });
-
-            const response = await fetch("http://0.0.0.0:8000/rag-query", {
+            const response = await fetch("http://localhost:8000/rag-query", {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ query: input })  // Send as JSON object with "query" key
+                body: JSON.stringify({
+                    session_id: sessionId,  // Send the session ID with each query
+                    query: input
+                })
             });
-    
+
             const data = await response.json();
             setMessages((prevMessages) => [...prevMessages, { text: data.response, type: 'received' }]);
-            // setMessages([...messages, { text: data.response, type: 'received' }]);
         }
     };
-    
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
@@ -86,5 +93,4 @@ function ChatPage() {
     );
 }
 
-// ReactDOM.render(<ChatPage />, document.getElementById('root'));
 export default ChatPage;

@@ -48,12 +48,12 @@ def search(query):
             models.Prefetch(
                 query=models.SparseVector(indices=query_indices, values=query_values),
                 using="keywords",
-                limit=1,
+                limit=3,
             ),
             models.Prefetch(
                 query=generate_bge_embedding(query),  # <-- dense vector using BGE model
                 using="",
-                limit=1,
+                limit=3,
             ),
         ],
         query=models.FusionQuery(fusion=models.Fusion.RRF),

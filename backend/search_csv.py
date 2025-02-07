@@ -147,7 +147,7 @@ print("--------------------------------- Generate Answer by LLM ----------------
 print("First Question")
 # First question
 response1 = Synthesizer.generate_response(
-    question="วิศวเครื่องกล อินเตอร์ มีเกณฑ์ยังไงบ้าง", 
+    question=query, 
     context=create_dataframe_from_results(search_result), 
     history=chat_history
 )

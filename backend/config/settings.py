@@ -5,7 +5,7 @@ from typing import Optional
 load_dotenv(dotenv_path="./.env")
 
 class LLMSettings:
-    temperature: float = 0.1
+    temperature: float = 0.3
     max_tokens: Optional[int] = 3000
     max_retries: int = 3
 

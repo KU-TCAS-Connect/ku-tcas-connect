@@ -129,8 +129,13 @@ context_str_after_filtered = RetrieveFilter.filter(query=query, documents=docume
 
 print("--------------------------------- Print Filtered Document ---------------------------------")
 print("Index of Filtered Document:\n", context_str_after_filtered.idx)
-print("Filtered Document Conent:\n", context_str_after_filtered.content)
+print("Filtered Document Content:\n", context_str_after_filtered.content)
 print("Reason why filter out:\n", context_str_after_filtered.reject_reasons)
+
+print("--------------------------------- Prepare filtered documents before send to LLM ---------------------------------")
+filtered_indices_list = context_str_after_filtered.idx
+df_of_search_result = create_dataframe_from_results(search_result)
+df_filtered = df_of_search_result.loc[df_of_search_result.index.isin(filtered_indices_list)]
 
 ################### QuestionExtraction ####################
 print("--------------------------------- QuestionExtraction ---------------------------------")
@@ -144,11 +149,9 @@ print(f"Program Type: {program_type}")
 
 ################### Generate Answer by LLM ####################
 print("--------------------------------- Generate Answer by LLM ---------------------------------")
-print("First Question")
-# First question
 response1 = Synthesizer.generate_response(
     question=query, 
-    context=create_dataframe_from_results(search_result), 
+    context=df_filtered, 
     history=chat_history
 )
 print("Answer Question:", response1.answer)

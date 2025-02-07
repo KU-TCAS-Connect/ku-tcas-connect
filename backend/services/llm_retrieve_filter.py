@@ -55,7 +55,7 @@ class RetrieveFilter:
 {"\n".join([f"เอกสารอันที่ {idx + 1}\n{doc}" for idx, doc in enumerate(documents)])}
 """
 
-        print("User Message:", user_message)        
+        print("Send this User Message to LLM:", user_message)        
         messages = [
             {"role": "system", "content": RetrieveFilter.SYSTEM_PROMPT},
             {"role": "user", "content": user_message},

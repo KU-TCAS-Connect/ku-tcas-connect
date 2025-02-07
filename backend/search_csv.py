@@ -127,33 +127,31 @@ for result in search_result.points:
 
 context_str_after_filtered = RetrieveFilter.filter(query=query, documents=document_from_db_before_filter)
 
-print("#################### Print Filtered Document ####################")
-print("index:\n", context_str_after_filtered.idx)
-print("Filtered Document:\n", context_str_after_filtered.content)
-print("reason:\n", context_str_after_filtered.reject_reasons)
+print("--------------------------------- Print Filtered Document ---------------------------------")
+print("Index of Filtered Document:\n", context_str_after_filtered.idx)
+print("Filtered Document Conent:\n", context_str_after_filtered.content)
+print("Reason why filter out:\n", context_str_after_filtered.reject_reasons)
 
+################### QuestionExtraction ####################
+print("--------------------------------- QuestionExtraction ---------------------------------")
+thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
+print(f"Extract from User Question using LLM Question Checker")
+print(thought_process)
+print(f"Major: {major}")
+print(f"Round: {round_}")
+print(f"Program: {program}")
+print(f"Program Type: {program_type}")
 
-
-# ################### QuestionExtraction ####################
-# print("################### QuestionExtraction ####################")
-# thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
-# print(f"Extract from User Question using LLM Question Checker")
-# print(thought_process)
-# print(f"Major: {major}")
-# print(f"Round: {round_}")
-# print(f"Program: {program}")
-# print(f"Program Type: {program_type}")
-
-#################### Generate Answer by LLM ####################
-# print("#################### Generate Answer by LLM ####################")
-# print("First Question")
-# # First question
-# response1 = Synthesizer.generate_response(
-#     question="วิศวเครื่องกล อินเตอร์ มีเกณฑ์ยังไงบ้าง", 
-#     context=create_dataframe_from_results(search_result), 
-#     history=chat_history
-# )
-# print("Answer First Question", response1.answer)
+################### Generate Answer by LLM ####################
+print("--------------------------------- Generate Answer by LLM ---------------------------------")
+print("First Question")
+# First question
+response1 = Synthesizer.generate_response(
+    question="วิศวเครื่องกล อินเตอร์ มีเกณฑ์ยังไงบ้าง", 
+    context=create_dataframe_from_results(search_result), 
+    history=chat_history
+)
+print("Answer Question:", response1.answer)
 
 # # Second question (same chat session, keeps context)
 # print("Second Question")

@@ -58,7 +58,7 @@ class Synthesizer:
         context_str = Synthesizer.dataframe_to_json(
             context, columns_to_keep=["content", "reference"]
         )
-        print("context_str", context_str)
+        # print("context_str", context_str)
 
         # Construct message history with previous exchanges
         messages = [

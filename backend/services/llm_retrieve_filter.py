@@ -47,12 +47,14 @@ class RetrieveFilter:
         if not documents:
             return FilteredDocument(idx=[], content=[], reasons=[])
 
+        document_list = "\n".join([f"เอกสารอันที่ {idx + 1}\n{doc}" for idx, doc in enumerate(documents)])
+
         user_message = f"""
 จากเอกสารที่ดึงมา กรุณาคัดกรองและเก็บเฉพาะเอกสารที่เกี่ยวข้องกับคำถามของผู้ใช้:
 คำถามของผู้ใช้: "{query}"
 
 เอกสารที่ดึงมา:
-{"\n".join([f"เอกสารอันที่ {idx + 1}\n{doc}" for idx, doc in enumerate(documents)])}
+{document_list}
 """
 
         print("Send this User Message to LLM:", user_message)        

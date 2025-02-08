@@ -183,20 +183,20 @@ if __name__ == "__main__":
     }
     
     txt_list_file = [
-        '68-TCAS1-AP.txt',
-        '68-TCAS1-International_Program.txt',
-        '68-TCAS1-Olympics.txt',
-        '68-TCAS1-Sport.txt',
-        '68-TCAS1-White_Elephant1.txt',
-        '68-TCAS1-White_Elephant2.txt',
-        '68-TCAS2-Diamond_Nontri.txt',
-        '68-TCAS2-International_Program.txt',
-        '68-TCAS2-KU_MOU.txt',
-        '68-TCAS2-Pra_Pirun.txt',
-        '68-TCAS2-Province_30.txt',
-        '68-TCAS2-Satit.txt',
-        '68-TCAS2-Sport.txt',
-        '68-TCAS3-Admission.txt',
+        '1-0-เรียนล่วงหน้า.txt',
+        '1-1-นานาชาติและภาษาอังกฤษ.txt',
+        '1-2-โอลิมปิกวิชาการ.txt',
+        '1-1-รับนักกีฬาดีเด่น.txt',
+        '1-1-ช้างเผือก.txt',
+        '1-2-ช้างเผือก.txt',
+        '2-0-เพชรนนทรี.txt',
+        '2-0-นานาชาติและภาษาอังกฤษ.txt',
+        '2-0-MOU.txt',
+        '2-0-ลูกพระพิรุณ.txt',
+        '2-0-โควต้า30จังหวัด.txt',
+        '2-0-นักเรียนดีเด่นจากโรงเรียนสาธิตแห่งมหาวิทยาลัยเกษตรศาสตร์.txt',
+        '2-0-ผู้มีความสามารถทางกีฬา.txt',
+        '3-0-Admission.txt',
     ]
 
     for file in txt_list_file:

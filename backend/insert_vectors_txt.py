@@ -110,72 +110,72 @@ if __name__ == "__main__":
     num_chunks = 5 # how many chunk we want?
 
     admission_info_mapping = {
-        '68-TCAS1-AP.txt': {
+        '1-0-เรียนล่วงหน้า.txt': {
             'admission_round': "1",
-            'admission_program': "โครงการเรียนล่วงหน้า",
+            'admission_program': "เรียนล่วงหน้า",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/11/11/68_TCAS1_AP_1.1_edit.pdf"
         },
-        '68-TCAS1-International_Program.txt': {
+        '1-1-นานาชาติและภาษาอังกฤษ.txt': {
             'admission_round': "1",
             'admission_program': "นานาชาติและภาษาอังกฤษ",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/11/68-TCAS1-International_Program_1.1.pdf"
         },
-        '68-TCAS1-Olympics.txt': {
+        '1-2-โอลิมปิกวิชาการ.txt': {
             'admission_round': "1",
             'admission_program': "โอลิมปิกวิชาการ",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/16/68_TCAS1_Oiympics_1.1.pdf"
         },
-        '68-TCAS1-Sport.txt': {
+        '1-1-รับนักกีฬาดีเด่น.txt': {
             'admission_round': "1",
-            'admission_program': "โครงการรับนักกีฬาดีเด่น",
+            'admission_program': "รับนักกีฬาดีเด่น",
             'reference':"https://admission.ku.ac.th/media/announcements/2024/10/03/68-TCAS1-Sport_1.1.pdf"
         },
-        '68-TCAS1-White_Elephant1.txt': {
+        '1-1-ช้างเผือก.txt': {
             'admission_round': "1/1",
-            'admission_program': "โครงการช้างเผือก",
+            'admission_program': "ช้างเผือก",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/02/68_TCAS1_White_Elephant_1.1.pdf"
         },
-        '68-TCAS1-White_Elephant2.txt': {
+        '1-2-ช้างเผือก.txt': {
             'admission_round': "1/2",
-            'admission_program': "โครงการช้างเผือก",
+            'admission_program': "ช้างเผือก",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/07/68_TCAS1_White_Elephant_1.2.pdf"
         },
-        '68-TCAS2-Diamond_Nontri.txt': {
+        '2-0-เพชรนนทรี.txt': {
             'admission_round': "1",
-            'admission_program': "โครงการเพชรนนทรี",
+            'admission_program': "เพชรนนทรี",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/12/26/68-TCAS2-Diamond_Nontri.pdf"
         },
-        '68-TCAS2-International_Program.txt': {
+        '2-0-นานาชาติและภาษาอังกฤษ.txt': {
             'admission_round': "2",
             'admission_program': "นานาชาติและภาษาอังกฤษ",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/18/68-TCAS2-International_Program.pdf"
         },
-        '68-TCAS2-KU_MOU.txt': {
+        '2-0-MOU.txt': {
             'admission_round': "2",
-            'admission_program': "โครงการความร่วมมือในการสร้างเครือข่ายทางการศึกษากับมหาวิทยาลัยเกษตรศาสตร์",
+            'admission_program': "MOU",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/25/68-TCAS2-KU_MOU.pdf"
         },
-        '68-TCAS2-Pra_Pirun.txt': {
+        '2-0-ลูกพระพิรุณ.txt': {
             'admission_round': "2",
-            'admission_program': "โครงการลูกพระพิรุณ",
+            'admission_program': "ลูกพระพิรุณ",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/15/68-TCAS2-Pra_Pirun.pdf"
         },
-        '68-TCAS2-Province_30.txt': {
+        '2-0-โควต้า30จังหวัด.txt': {
             'admission_round': "2",
             'admission_program': "โควตา30จังหวัด",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/15/68-TCAS2-Province_30.pdf"
         },
-        '68-TCAS2-Satit.txt': {
+        '2-0-นักเรียนดีเด่นจากโรงเรียนสาธิตแห่งมหาวิทยาลัยเกษตรศาสตร์.txt': {
             'admission_round': "2",
             'admission_program': "นักเรียนดีเด่นจากโรงเรียนสาธิตแห่งมหาวิทยาลัยเกษตรศาสตร์",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/15/68-TCAS2-Province_30.pdf"
         },
-        '68-TCAS2-Sport.txt': {
+        '2-0-ผู้มีความสามารถทางกีฬา.txt': {
             'admission_round': "2",
             'admission_program': "ผู้มีความสามารถทางกีฬา",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/11/11/68-TCAS2-Sport.pdf"
         },
-        '68-TCAS3-Admission.txt': {
+        '3-0-Admission.txt': {
             'admission_round': "3",
             'admission_program': "Admission",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/31/68-TCAS3-Admission_edit-1.pdf"

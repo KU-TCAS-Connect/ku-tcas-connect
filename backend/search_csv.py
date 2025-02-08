@@ -92,7 +92,7 @@ def create_dataframe_from_results(results) -> pd.DataFrame:
 #################### Main ####################
 chat_history = []  # Initialize chat history
 
-query = "วิศวเครื่องกล ภาคไทย มีเกณฑ์ยังไงบ้าง"
+query = "วิศวะซอฟต์แวร์และความรู้ รอบ1/1 นานาชาติ ภาคนานาชาติ มีเกณฑ์อะไรบ้าง"
 query_indices, query_values = compute_sparse_vector(query)
 
 search_result = client.query_points(
@@ -134,18 +134,20 @@ print("Reason why filter out:\n", context_str_after_filtered.reject_reasons)
 
 print("--------------------------------- Prepare filtered documents before send to LLM ---------------------------------")
 filtered_indices_list = context_str_after_filtered.idx
+filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list]
 df_of_search_result = create_dataframe_from_results(search_result)
 df_filtered = df_of_search_result.loc[df_of_search_result.index.isin(filtered_indices_list)]
+print("df_filterd", df_filtered)
 
 ################### QuestionExtraction ####################
-print("--------------------------------- QuestionExtraction ---------------------------------")
-thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
-print(f"Extract from User Question using LLM Question Checker")
-print(thought_process)
-print(f"Major: {major}")
-print(f"Round: {round_}")
-print(f"Program: {program}")
-print(f"Program Type: {program_type}")
+# print("--------------------------------- QuestionExtraction ---------------------------------")
+# thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
+# print(f"Extract from User Question using LLM Question Checker")
+# print(thought_process)
+# print(f"Major: {major}")
+# print(f"Round: {round_}")
+# print(f"Program: {program}")
+# print(f"Program Type: {program_type}")
 
 ################### Generate Answer by LLM ####################
 print("--------------------------------- Generate Answer by LLM ---------------------------------")

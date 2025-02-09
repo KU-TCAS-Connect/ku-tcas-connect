@@ -10,6 +10,7 @@ import ast
 
 from services.llm_retrieve_filter import RetrieveFilter
 from services.llm_synthesizer import Synthesizer
+from services.llm_answer import AnswerQuestion
 from database.connectdb import VectorStore
 from services.bge_embedding import FlagModel
 from services.question_extraction import QuestionExtraction, QuestionExtractionResponse
@@ -151,7 +152,13 @@ print("df_filterd", df_filtered)
 
 ################### Generate Answer by LLM ####################
 print("--------------------------------- Generate Answer by LLM ---------------------------------")
-response1 = Synthesizer.generate_response(
+# response1 = Synthesizer.generate_response(
+#     question=query, 
+#     context=df_filtered, 
+#     history=chat_history
+# )
+# print("Answer Question:", response1.answer)
+response1 = AnswerQuestion.generate_response(
     question=query, 
     context=df_filtered, 
     history=chat_history

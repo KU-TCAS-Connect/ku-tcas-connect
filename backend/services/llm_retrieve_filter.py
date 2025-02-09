@@ -2,10 +2,10 @@ from typing import List, Dict
 from pydantic import BaseModel, Field
 from services.llm_factory import LLMFactory
 
-class FilteredDocument(BaseModel):
+class FilteredDocumentResponse(BaseModel):
     """A model to represent the filtered documents and their associated details."""
     idx: List[int] = Field(
-        description="List of indices of the documents that were kept"
+        description="List of indices of the documents that were kept", examples=[1, 2, 3, 4, 5, 6, 7]
     )
     content: List[str] = Field(
         description=" List of full content of the documents that were kept"
@@ -13,7 +13,7 @@ class FilteredDocument(BaseModel):
     reject_reasons: List[str] = Field(
         description="List of thoughts and reasons why documents were filtered out or kept"
     )
-
+    
 class RetrieveFilter:
     """Utility class for filtering and retaining only the documents relevant to a user's query."""
 
@@ -34,7 +34,7 @@ class RetrieveFilter:
     """
 
     @staticmethod
-    def filter(query: str, documents: List[str]) -> FilteredDocument:
+    def filter(query: str, documents: List[str]) -> FilteredDocumentResponse:
         """Filters the retrieved documents to keep only those relevant to the user's query.
 
         Args:
@@ -42,10 +42,10 @@ class RetrieveFilter:
             documents: The list of documents retrieved from the database.
 
         Returns:
-            A FilteredDocument instance with details about kept or filtered-out documents.
+            A FilteredDocumentResponse instance with details about kept or filtered-out documents.
         """
         if not documents:
-            return FilteredDocument(idx=[], content=[], reasons=[])
+            return FilteredDocumentResponse(idx=[], content=[], reasons=[])
 
         document_list = "\n".join([f"เอกสารอันที่ {idx + 1}\n{doc}" for idx, doc in enumerate(documents)])
 
@@ -66,6 +66,6 @@ class RetrieveFilter:
         llm = LLMFactory("openai")
         response = llm.create_completion(
             messages=messages,
-            response_model=FilteredDocument,
+            response_model=FilteredDocumentResponse,
         )
         return response

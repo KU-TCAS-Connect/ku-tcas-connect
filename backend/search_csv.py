@@ -8,6 +8,7 @@ from datetime import datetime
 import pandas as pd
 import ast
 
+from services.llm_question_classification import QueryClassification
 from services.llm_retrieve_filter import RetrieveFilter
 from services.llm_synthesizer import Synthesizer
 from services.llm_answer import AnswerQuestion
@@ -16,7 +17,7 @@ from services.bge_embedding import FlagModel
 from services.question_extraction import QuestionExtraction, QuestionExtractionResponse
 import torch
 
-device = "cuda(GPU)" if torch.cuda.is_available() else "CPU"
+device = "cuda" if torch.cuda.is_available() else "CPU"
 print(f"Using device: {device}")
 
 load_dotenv()
@@ -94,6 +95,7 @@ def create_dataframe_from_results(results) -> pd.DataFrame:
 chat_history = []  # Initialize chat history
 
 query = "วิศวะซอฟต์แวร์และความรู้ รอบ1/1 นานาชาติ ภาคนานาชาติ มีเกณฑ์อะไรบ้าง"
+
 query_indices, query_values = compute_sparse_vector(query)
 
 search_result = client.query_points(
@@ -138,9 +140,10 @@ filtered_indices_list = context_str_after_filtered.idx
 filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list]
 df_of_search_result = create_dataframe_from_results(search_result)
 df_filtered = df_of_search_result.loc[df_of_search_result.index.isin(filtered_indices_list)]
+print("df_of_search_result", df_of_search_result)
 print("df_filterd", df_filtered)
 
-################### QuestionExtraction ####################
+# ################## QuestionExtraction ####################
 # print("--------------------------------- QuestionExtraction ---------------------------------")
 # thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
 # print(f"Extract from User Question using LLM Question Checker")
@@ -150,7 +153,7 @@ print("df_filterd", df_filtered)
 # print(f"Program: {program}")
 # print(f"Program Type: {program_type}")
 
-################### Generate Answer by LLM ####################
+################## Generate Answer by LLM ####################
 print("--------------------------------- Generate Answer by LLM ---------------------------------")
 # response1 = Synthesizer.generate_response(
 #     question=query, 
@@ -158,6 +161,7 @@ print("--------------------------------- Generate Answer by LLM ----------------
 #     history=chat_history
 # )
 # print("Answer Question:", response1.answer)
+
 response1 = AnswerQuestion.generate_response(
     question=query, 
     context=df_filtered, 

@@ -16,6 +16,7 @@ from database.connectdb import VectorStore
 from services.bge_embedding import FlagModel
 from services.question_extraction import QuestionExtraction, QuestionExtractionResponse
 import torch
+import os
 
 device = "cuda" if torch.cuda.is_available() else "CPU"
 print(f"Using device: {device}")
@@ -94,7 +95,9 @@ def create_dataframe_from_results(results) -> pd.DataFrame:
 #################### Main ####################
 chat_history = []  # Initialize chat history
 
-query = "วิศวะซอฟต์แวร์และความรู้ รอบ1/1 นานาชาติ ภาคนานาชาติ มีเกณฑ์อะไรบ้าง"
+# query = "วิศวะซอฟต์แวร์และความรู้ รอบ1/1 นานาชาติ ภาคนานาชาติ มีเกณฑ์อะไรบ้าง"
+query = os.getenv("QUERY", "No query provided") # set query from main_search.py
+print(f"Received query: {query}")
 
 query_indices, query_values = compute_sparse_vector(query)
 
@@ -104,12 +107,12 @@ search_result = client.query_points(
         models.Prefetch(
             query=models.SparseVector(indices=query_indices, values=query_values),
             using="keywords",
-            limit=3,
+            limit=2,
         ),
         models.Prefetch(
             query=generate_bge_embedding(query),  # <-- dense vector using BGE model
             using="",
-            limit=3,
+            limit=2,
         ),
     ],
     query=models.FusionQuery(fusion=models.Fusion.RRF),

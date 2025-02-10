@@ -4,12 +4,18 @@ from qdrant_client import QdrantClient, models
 from qdrant_client.models import Filter, FieldCondition, MatchValue
 from FlagEmbedding import BGEM3FlagModel
 
+from services.llm_answer import AnswerQuestion
 from services.llm_retrieve_filter import RetrieveFilter
 from services.question_extraction import QuestionExtraction, QuestionExtractionResponse
 from database.connectdb import VectorStore
 from services.bge_embedding import FlagModel
 from services.llm_synthesizer import Synthesizer
 import pandas as pd
+import torch
+import os
+
+device = "cuda" if torch.cuda.is_available() else "CPU"
+print(f"Using device: {device}")
 
 load_dotenv()
 
@@ -27,7 +33,12 @@ bge_model = BGEM3FlagModel('BAAI/bge-m3', use_fp16=True)
 
 def compute_sparse_vector(text):
     sentences_1 = [text]  # Use the content of the row for encoding
-    output_1 = bge_model.encode(sentences_1, return_dense=True, return_sparse=True, return_colbert_vecs=False)
+    output_1 = bge_model.encode(
+        sentences_1,
+        return_dense=True,
+        return_sparse=True,
+        return_colbert_vecs=False
+    )
     
     # Extract the lexical weights (this is your sparse representation)
     lexical_weights = output_1['lexical_weights'][0]
@@ -45,7 +56,12 @@ def generate_bge_embedding(text):
     try:
         # Generate dense embedding using BGE model
         sentences_1 = [text]  # The content you want to encode
-        output_1 = bge_model.encode(sentences_1, return_dense=True, return_sparse=True, return_colbert_vecs=False)
+        output_1 = bge_model.encode(
+            sentences_1,
+            return_dense=True,
+            return_sparse=True,
+            return_colbert_vecs=False
+        )
 
         # Extract the dense vector (embedding)
         dense_vector = output_1['dense_vecs'][0]
@@ -95,7 +111,10 @@ def create_dataframe_from_results(results) -> pd.DataFrame:
 #################### Main ####################
 chat_history = []  # Initialize chat history
 
-query = "อยากทราบกำหนดการการประกาศผลผู้ผ่านการคัดเลือก "
+query = "อยากทราบกำหนดการการประกาศผลผู้ผ่านการคัดเลือก"
+query = os.getenv("QUERY", "No query provided") # set query from main_search.py
+print(f"Received query: {query}")
+
 query_indices, query_values = compute_sparse_vector(query)
 
 search_result = client.query_points(
@@ -137,9 +156,12 @@ print("Reason why filter out:\n", context_str_after_filtered.reject_reasons)
 
 print("--------------------------------- Prepare filtered documents before send to LLM ---------------------------------")
 filtered_indices_list = context_str_after_filtered.idx
+filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list]
 df_of_search_result = create_dataframe_from_results(search_result)
 df_filtered = df_of_search_result.loc[df_of_search_result.index.isin(filtered_indices_list)]
-print(df_filtered)
+print("df_of_search_result", df_of_search_result)
+print("df_filterd", df_filtered)
+
 ################### QuestionExtraction ####################
 # print("--------------------------------- QuestionExtraction ---------------------------------")
 # thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
@@ -152,7 +174,14 @@ print(df_filtered)
 
 ################### Generate Answer by LLM ####################
 print("--------------------------------- Generate Answer by LLM ---------------------------------")
-response1 = Synthesizer.generate_response(
+# response1 = Synthesizer.generate_response(
+#     question=query, 
+#     context=df_filtered, 
+#     history=chat_history
+# )
+# print("Answer Question:", response1.answer)
+
+response1 = AnswerQuestion.generate_response(
     question=query, 
     context=df_filtered, 
     history=chat_history

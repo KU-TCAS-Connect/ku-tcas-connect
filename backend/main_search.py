@@ -3,7 +3,7 @@ import os
 
 query_classification = QueryClassification()
 queries = [
-    "วิศวะซอฟต์แวร์และความรู้ รอบ1/1 นานาชาติ ภาคนานาชาติ มีเกณฑ์อะไรบ้าง",
+    # "วิศวะซอฟต์แวร์และความรู้ รอบ1/1 นานาชาติ ภาคนานาชาติ มีเกณฑ์อะไรบ้าง",
     # "อยากทราบรายละเอียด",
     # "ราคาน้ำมันวันนี้เท่าไหร่",
     # "กระบวนการรับสมัครเป็นอย่างไร",
@@ -14,7 +14,7 @@ queries = [
     # "มีเกณฑ์คุณสมบัติอะไรบ้าง",
     # "ต้องได้คะแนนขั้นต่ำเท่าไหร่",
     # "ต้องใช้วิชาอะไรบ้าง",
-    # "ต้องใช้ GPA เท่าไหร่",
+    "ต้องใช้ GPA เท่าไหร่",
     # "ต้องสอบเข้าไหม"
 ]
 
@@ -25,6 +25,8 @@ for query in queries:
     print(f"คำถาม: {query} → จัดหมวดหมู่เป็น: {category}")
 
 category = category.intent
+
+os.environ["QUERY"] = query  # Set environment variable
 
 if category == "general_info":
     print("Executing search_txt.py")

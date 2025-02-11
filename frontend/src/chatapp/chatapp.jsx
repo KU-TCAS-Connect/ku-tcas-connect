@@ -70,7 +70,7 @@ function ChatPage() {
                     <div key={index} className={`flex items-center mb-3 ${msg.type === 'sent' ? 'justify-end' : 'justify-start'}`}>
                         {msg.type === 'received' && (
                             <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center mr-2">
-                                CN
+                                <Icon icon="fluent:bot-20-filled" width="32" height="32" style={{ color: "#0097B2", background:"#D9EBEE" , borderRadius:"50%"}} />
                             </div>
                         )}
                         <div

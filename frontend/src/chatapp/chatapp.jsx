@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-// import ReactDOM from 'react-dom';
-// import './index.css';
+import React, { useState, useEffect, useRef } from 'react';
+import Navbar from '../components/navbar';
+import { Icon } from "@iconify/react";
 
 function ChatPage() {
     const [messages, setMessages] = useState([
@@ -8,30 +8,46 @@ function ChatPage() {
         { text: 'Hi, I need some information.', type: 'sent' }
     ]);
     const [input, setInput] = useState('');
+    const [sessionId, setSessionId] = useState('');
+    const lastMessageRef = useRef(null);  // Reference to the last message
+
+    useEffect(() => {
+        const fetchSessionId = async () => {
+            const response = await fetch("http://localhost:8000/new-session");
+            const data = await response.json();
+            setSessionId(data.session_id);  // Store session ID
+        };
+
+        fetchSessionId();
+    }, []);
+
+    useEffect(() => {
+        if (lastMessageRef.current) {
+            lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages]);  // Scroll to the latest message when messages change
 
     const sendMessage = async () => {
         if (input.trim() !== '') {
-            // setMessages([...messages, { text: input, type: 'sent' }]);
             setMessages((prevMessages) => [...prevMessages, { text: input, type: 'sent' }]);
             setInput('');
 
-            // console.log("Sending payload:", { query: input });
-
-            const response = await fetch("http://0.0.0.0:8000/rag-query", {
+            const response = await fetch("http://localhost:8000/rag-query", {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ query: input })  // Send as JSON object with "query" key
+                body: JSON.stringify({
+                    session_id: sessionId,  // Send the session ID with each query
+                    query: input
+                })
             });
-    
+
             const data = await response.json();
             setMessages((prevMessages) => [...prevMessages, { text: data.response, type: 'received' }]);
-            // setMessages([...messages, { text: data.response, type: 'received' }]);
         }
     };
-    
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
@@ -41,32 +57,38 @@ function ChatPage() {
 
     return (
         <div className="flex flex-col h-screen w-screen border border-gray-300">
-            <div className="bg-emerald-500 text-white p-4 text-center text-lg">
-                KUTCAS connect
+            <Navbar />
+            <div className='mx-8 mt-4 py-4 px-8 border border-gray-300 rounded-lg rounded-b-none'>
+                <span className='flex items-center space-x-2'>
+                    <Icon icon="fluent:bot-20-filled" width="32" height="32" style={{ color: "#0097B2", background:"#D9EBEE" , borderRadius:"50%"}} />
+                    <p className='px-1 font-medium'>น้องคอนเนค</p>
+                </span>
             </div>
-            <div className="flex-grow p-4 overflow-y-auto bg-gray-100">
+            
+            <div className="flex-grow mx-8 mb-4 p-4 overflow-y-auto border border-gray-300 rounded-lg shadow-lg rounded-t-none">
                 {messages.map((msg, index) => (
                     <div key={index} className={`flex items-center mb-3 ${msg.type === 'sent' ? 'justify-end' : 'justify-start'}`}>
                         {msg.type === 'received' && (
                             <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center mr-2">
-                                B
+                                <Icon icon="fluent:bot-20-filled" width="32" height="32" style={{ color: "#0097B2", background:"#D9EBEE" , borderRadius:"50%"}} />
                             </div>
                         )}
                         <div
-                            className={`p-3 rounded-large max-w-xs ${msg.type === 'sent' ? 'bg-emerald-500 text-white' : 'bg-gray-300 text-black'
-                                }`}
+                            className={`p-2 rounded-large max-w-xs ${msg.type === 'sent' ? 'bg-kutcas-green-100 text-black rounded-lg rounded-br-none' : 'bg-gray-300 text-black rounded-t-lg rounded-r-lg rounded-bl-none'}`}
                         >
                             {msg.text}
                         </div>
                         {msg.type === 'sent' && (
-                            <div className="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center ml-2 text-white">
+                            <div className="w-8 h-8 bg-kutcas-green-700 rounded-full flex items-center justify-center ml-2 text-white">
                                 U
                             </div>
                         )}
                     </div>
                 ))}
+                {/* This element ensures we always scroll to the latest message */}
+                <div ref={lastMessageRef} />
             </div>
-            <div className="flex p-4 border-t border-gray-300 bg-white">
+            <div className="flex p-4 border-t border-gray-300 bg-white sticky bottom-0">
                 <input
                     type="text"
                     className="flex-grow p-2 border border-gray-300 rounded-lg mr-2"
@@ -76,7 +98,7 @@ function ChatPage() {
                     onKeyDown={handleKeyPress}
                 />
                 <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    className="bg-kutcas-green-100 text-black px-4 py-2 rounded-lg hover:text-white hover:bg-kutcas-green-700"
                     onClick={sendMessage}
                 >
                     Send
@@ -86,5 +108,4 @@ function ChatPage() {
     );
 }
 
-// ReactDOM.render(<ChatPage />, document.getElementById('root'));
 export default ChatPage;

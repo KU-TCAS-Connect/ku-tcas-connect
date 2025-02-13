@@ -8,13 +8,17 @@ from datetime import datetime
 import pandas as pd
 import ast
 
+from services.llm_question_classification import QueryClassification
+from services.llm_retrieve_filter import RetrieveFilter
 from services.llm_synthesizer import Synthesizer
+from services.llm_answer import AnswerQuestion
 from database.connectdb import VectorStore
 from services.bge_embedding import FlagModel
 from services.question_extraction import QuestionExtraction, QuestionExtractionResponse
 import torch
+import os
 
-device = "cuda(GPU)" if torch.cuda.is_available() else "CPU"
+device = "cuda" if torch.cuda.is_available() else "CPU"
 print(f"Using device: {device}")
 
 load_dotenv()
@@ -91,7 +95,10 @@ def create_dataframe_from_results(results) -> pd.DataFrame:
 #################### Main ####################
 chat_history = []  # Initialize chat history
 
-query = "วิศวเครื่องกล รอบ 1 ภาคภาษอังกฤษ นานาชาติ มีเกณฑ์ยังไงบ้าง"
+# query = "วิศวะซอฟต์แวร์และความรู้ รอบ1/1 นานาชาติ ภาคนานาชาติ มีเกณฑ์อะไรบ้าง"
+query = os.getenv("QUERY", "No query provided") # set query from main_search.py
+print(f"Received query: {query}")
+
 query_indices, query_values = compute_sparse_vector(query)
 
 search_result = client.query_points(
@@ -100,50 +107,110 @@ search_result = client.query_points(
         models.Prefetch(
             query=models.SparseVector(indices=query_indices, values=query_values),
             using="keywords",
-            limit=1,
+            limit=2,
         ),
         models.Prefetch(
             query=generate_bge_embedding(query),  # <-- dense vector using BGE model
             using="",
-            limit=1,
+            limit=2,
         ),
     ],
     query=models.FusionQuery(fusion=models.Fusion.RRF),
 )
 
-#################### Print the search results (Retrieve Document) ####################
+################### Print the search results (Retrieve Document) ####################
 print("#################### Print the search results (Retrieve Document) ####################")
 for result in search_result.points:
     print(f"Score: {result.score}")
     print(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""")
     print("---------------------------------")
 
-################### QuestionExtraction ####################
-print("################### QuestionExtraction ####################")
-thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
-print(f"Extract from User Question using LLM Question Checker")
-print(thought_process)
-print(f"Major: {major}")
-print(f"Round: {round_}")
-print(f"Program: {program}")
-print(f"Program Type: {program_type}")
+# Extract retrieved documents from search_result
+document_from_db_before_filter = []
+for result in search_result.points:
+    document_content = f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}"""
+    document_from_db_before_filter.append(document_content)
 
-#################### Generate Answer by LLM ####################
-print("#################### Generate Answer by LLM ####################")
-print("First Question")
-# First question
-response1 = Synthesizer.generate_response(
-    question="วิศวเครื่องกล อินเตอร์ มีเกณฑ์ยังไงบ้าง", 
-    context=create_dataframe_from_results(search_result), 
+context_str_after_filtered = RetrieveFilter.filter(query=query, documents=document_from_db_before_filter)
+
+print("--------------------------------- Print Filtered Document ---------------------------------")
+print("Index of Filtered Document:\n", context_str_after_filtered.idx)
+print("Filtered Document Content:\n", context_str_after_filtered.content)
+print("Reason why filter out:\n", context_str_after_filtered.reject_reasons)
+
+print("--------------------------------- Prepare filtered documents before send to LLM ---------------------------------")
+filtered_indices_list = context_str_after_filtered.idx
+filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list]
+df_of_search_result = create_dataframe_from_results(search_result)
+df_filtered = df_of_search_result.loc[df_of_search_result.index.isin(filtered_indices_list)]
+print("df_of_search_result", df_of_search_result)
+print("df_filterd", df_filtered)
+
+# ################## QuestionExtraction ####################
+# print("--------------------------------- QuestionExtraction ---------------------------------")
+# thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
+# print(f"Extract from User Question using LLM Question Checker")
+# print(thought_process)
+# print(f"Major: {major}")
+# print(f"Round: {round_}")
+# print(f"Program: {program}")
+# print(f"Program Type: {program_type}")
+
+################## Generate Answer by LLM ####################
+print("--------------------------------- Generate Answer by LLM ---------------------------------")
+# response1 = Synthesizer.generate_response(
+#     question=query, 
+#     context=df_filtered, 
+#     history=chat_history
+# )
+# print("Answer Question:", response1.answer)
+
+response1 = AnswerQuestion.generate_response(
+    question=query, 
+    context=df_filtered, 
     history=chat_history
 )
-print("Answer First Question", response1.answer)
+print("Answer Question:", response1.answer)
 
-# Second question (same chat session, keeps context)
-print("Second Question")
-response2 = Synthesizer.generate_response(
-    question="แล้วค่าเทอมเท่าไหร่?", 
-    context=create_dataframe_from_results(search_result), 
-    history=chat_history  # Keeps previous messages
-)
-print("Answer Secodn Question", response2.answer)
+# # Second question (same chat session, keeps context)
+# print("Second Question")
+# response2 = Synthesizer.generate_response(
+#     question="แล้วค่าเทอมเท่าไหร่?", 
+#     context=create_dataframe_from_results(search_result), 
+#     history=chat_history  # Keeps previous messages
+# )
+# print("Answer Secodn Question", response2.answer)
+
+
+# this need to save the output for each
+import datetime
+import os
+current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+filename = f"log/output/{current_time}.txt"
+
+if not os.path.exists(filename):
+    open(filename, 'w', encoding="utf-8").close()
+
+with open(f"{filename}", "a",  encoding="utf-8") as file:
+    for result in search_result.points:
+        file.write(f"Score: {result.score}" + "\n")
+        file.write(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""" + "\n")
+        file.write(f"---------------------------------" + "\n")
+        
+    file.write(f"--------------------------------- Print Filtered Document ---------------------------------"+"\n")
+    file.write(f"Index of Filtered Document:\n")
+    file.write(str(context_str_after_filtered.idx))
+    file.write("\n")
+    file.write(f"Filtered Document Content:\n")
+    file.write(str(context_str_after_filtered.content))
+    file.write("\n")
+    file.write(f"Reason why filter out:\n")
+    file.write(str(context_str_after_filtered.reject_reasons))
+    file.write("\n")
+    file.write(f"--------------------------------- Prepare filtered documents before send to LLM ---------------------------------"+"\n")
+    file.write(f"df_filterd")
+    file.write(str(df_filtered))
+    file.write("\n")
+    file.write(f"--------------------------------- Generate Answer by LLM ---------------------------------"+"\n")
+    file.write(f"Answer Question:\n")
+    file.write(str(response1.answer))

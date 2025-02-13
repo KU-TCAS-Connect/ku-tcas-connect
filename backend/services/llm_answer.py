@@ -4,37 +4,37 @@ from pydantic import BaseModel, Field
 from services.llm_factory import LLMFactory
 
 
-class SynthesizedResponse(BaseModel):
+class AnswerResponse(BaseModel):
     thought_process: List[str] = Field(
-        description="List of thoughts that the AI assistant had while synthesizing the answer"
+        description="List of thoughts that the AI assistant"
     )
-    answer: str = Field(description="The synthesized answer to the user's question")
+    answer: str = Field(description="The answer to the user's question")
     enough_context: bool = Field(
         description="Whether the assistant has enough context to answer the question"
     )
 
 
-class Synthesizer:
+class AnswerQuestion:
     SYSTEM_PROMPT = """
     # Role and Purpose
-    You are an AI assistant chatbot for an FAQ system for Kasetsart University in Thailand. Your task is to synthesize a coherent and helpful answer 
-    based on the given question and relevant context retrieved from a knowledge database.
+    You are an AI assistant chatbot for an FAQ system for Kasetsart University in Thailand. 
+    Your task is to merge the context that find from DB by **not summary or remove context out**, give all to user and adding
+    
+    (English)
+    - For the result of <The criteria that user want to find>
+    - Please check more from <reference>
+    - Or if the answer not correct, please ask with the format major, round, program, and program type
+    
+    (Thai)
+    - จากผลลัพธ์ที่ท่านต้องการหา <เกณฑ์ที่ผู้ใช้ต้องการหา>
+    - ผู้ใช้สามารถตรวจสอบความถูกต้องได้ที่ <อ้างอิง>
+    - หรือหากคำตอบไม่ตรงกับที่ท่าต้องการ ให้ลองถามด้วยรูปแบบ สาขาวิชา รอบการคัดเลือก โครงการในการเข้า และภาค เช่น วิศวะซอฟต์แวร์และความรู้ รอบ1/1 นานาชาติ ภาคนานาชาติ มีเกณฑ์อะไรบ้าง
 
     # Language Handling:
     - Detect the language of the user's question.
     - If the detected language is **Thai**, always respond in **Thai**.
     - If the detected language is **English**, always respond in **English**.
     - Do **not** switch languages unless the user explicitly requests it.
-
-    # Guidelines:
-    1. Provide a clear and concise answer to the question.
-    2. Use only the information from the relevant context to support your answer.
-    3. The context is retrieved based on cosine similarity, so some information might be missing or irrelevant.
-    4. Be transparent when there is insufficient information to fully answer the question.
-    5. Do not make up or infer information not present in the provided context.
-    6. If you cannot answer the question based on the given context, clearly state that.
-    7. Maintain a helpful and professional tone appropriate for customer service.
-    8. Adhere strictly to company guidelines and policies by using only the provided knowledge base.
     """
 
     @staticmethod
@@ -42,42 +42,32 @@ class Synthesizer:
         question: str, 
         context: pd.DataFrame, 
         history: List[Dict[str, str]] = None
-    ) -> SynthesizedResponse:
-        """Generates a synthesized response based on the question, context, and chat history.
-
-        Args:
-            question: The user's question.
-            context: The relevant context retrieved from the knowledge base.
-            history: Previous chat messages to maintain conversation context.
-
-        Returns:
-            A SynthesizedResponse containing thought process and answer.
-        """
+    ) -> AnswerResponse:
 
         if history is None:
             history = []
 
         # Convert DataFrame to JSON string for context
-        context_str = Synthesizer.dataframe_to_json(
+        context_str = AnswerQuestion.dataframe_to_json(
             context, columns_to_keep=["content", "reference"]
         )
         # print("context_str", context_str)
 
         # Construct message history with previous exchanges
         messages = [
-            {"role": "system", "content": Synthesizer.SYSTEM_PROMPT},
+            {"role": "system", "content": AnswerQuestion.SYSTEM_PROMPT},
         ] + history + [  # Add previous chat history
             {"role": "user", "content": f"# User question:\n{question}"},
             {
                 "role": "assistant",
-                "content": f"# Retrieved information:\n{context_str}",
+                "content": f"# Answer information:\n{context_str}",
             },
         ]
 
         # Call the LLM
         llm = LLMFactory("openai")
         response = llm.create_completion(
-            response_model=SynthesizedResponse,
+            response_model=AnswerResponse,
             messages=messages,
         )
 

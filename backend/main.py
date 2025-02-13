@@ -2,7 +2,10 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict
-from search_csv import compute_sparse_vector, create_dataframe_from_results, generate_bge_embedding
+from services.llm_answer import AnswerQuestion
+from search_txt import main_search_and_answer_txt
+from main_query_classification import query_classification
+from search_csv import main_search_and_answer_csv
 from services.llm_synthesizer import Synthesizer
 from uuid import uuid4
 from dotenv import load_dotenv
@@ -30,8 +33,6 @@ vector_class = VectorStore()
 client = vector_class.qdrant_client
 models = vector_class.qdrant_model
 
-client = QdrantClient("http://localhost:6333")
-
 class QueryRequest(BaseModel):
     session_id: str  # Unique session ID for tracking history
     query: str
@@ -39,50 +40,67 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     response: str
 
-def search(query):
-    query_indices, query_values = compute_sparse_vector(query)
-
-    search_result = client.query_points(
-        collection_name=vector_class.col_setting.collection_name["csv"],
-        prefetch=[
-            models.Prefetch(
-                query=models.SparseVector(indices=query_indices, values=query_values),
-                using="keywords",
-                limit=3,
-            ),
-            models.Prefetch(
-                query=generate_bge_embedding(query),  # <-- dense vector using BGE model
-                using="",
-                limit=3,
-            ),
-        ],
-        query=models.FusionQuery(fusion=models.Fusion.RRF),
-    )
-
-    return search_result
-
-def rag_pipeline(query: str, session_id: str) -> str:
+def rag_pipeline_csv(query: str, session_id: str) -> str:
     """Generates a response while keeping track of conversation history."""
     history = chat_histories.get(session_id, [])
 
-    search_result = search(query)
-    context = create_dataframe_from_results(search_result)
-    response = Synthesizer.generate_response(question=query, context=context, history=history)
+    answer = main_search_and_answer_csv(query, history)
+    chat_histories[session_id] = history
+    return answer
 
-    # Store the conversation history
-    history.append({"role": "user", "content": query})
-    history.append({"role": "assistant", "content": response.answer})
+def rag_pipeline_txt(query: str, session_id: str) -> str:
+    """Generates a response while keeping track of conversation history."""
+    history = chat_histories.get(session_id, [])
+
+    answer =  main_search_and_answer_txt(query, history)
     chat_histories[session_id] = history
 
-    return response.answer
+    return answer
 
+# def rag_pipeline_llm(query: str, session_id: str) -> str:
+#     """Generates an open-ended response while keeping track of conversation history."""
+#     history = chat_histories.get(session_id, [])
+    
+#     # Add the user query to the history
+#     history.append({"role": "user", "content": query})
+
+#     # Now, create the conversation history context for LLM
+#     conversation_context = ""
+#     for message in history:
+#         conversation_context += f"{message['role']}: {message['content']}\n"
+    
+#     # Call the LLM to generate a response based on the conversation context
+#     synthesizer = AnswerQuestion()  # Assuming Synthesizer handles LLM interaction
+#     answer = synthesizer.get_response(conversation_context)  # Pass the entire history
+    
+#     # Store the assistant's response in history
+#     history.append({"role": "assistant", "content": answer})
+#     chat_histories[session_id] = history
+
+#     return answer
+    
 @app.post("/rag-query", response_model=QueryResponse)
 async def rag_query(request: QueryRequest):
-    try:
-        response = rag_pipeline(request.query, request.session_id)
-        return QueryResponse(response=response)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    search_table = query_classification(request.query)
+    if search_table == "csv":
+        try:
+            response = rag_pipeline_csv(request.query, request.session_id)
+            return QueryResponse(response=response)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+    elif search_table == "txt":
+        try:
+            response = rag_pipeline_txt(request.query, request.session_id)
+            return QueryResponse(response=response)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+    elif search_table == "none":
+        pass
+        # try:
+        #     response = rag_pipeline_llm(request.query, request.session_id)
+        #     return QueryResponse(response=response)
+        # except Exception as e:
+        #     raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/new-session")
 async def new_session():

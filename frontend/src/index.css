@@ -1,4 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+  --color-midnight: #121063;
+  --color-tahiti: #3ab7bf;
+  --color-bermuda: #78dcca;
+  --color-kutcasgreen100:#D9EBEE;
+  --color-kutcasgreen700: #0097B2;
+}
+
+.word-break {
+  word-break: break-all;
+}
+
 /* 
 @tailwind base;
 @tailwind components;

@@ -1,11 +1,40 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/navbar';
 import { Icon } from "@iconify/react";
+
+const answerShow = `
+รอบการคัดเลือก: 1/1
+โครงการ: นานาชาติและภาษาอังกฤษ
+สาขาวิชา: วศ.บ. สาขาวิชาวิศวกรรมซอฟต์แวร์และความรู้ (นานาชาติ)
+จำนวนรับ: 36
+เงื่อนไขขั้นต่ำ: 1. กำลังศึกษาหรือสำเร็จการศึกษาชั้นมัธยมศึกษาปีที่ 6 หรือกำลังศึกษาในชั้นปีสุดท้ายหรือสำเร็จการศึกษาระดับมัธยมศึกษาตอนปลายจากต่างประเทศ หรือมีการเทียบวุฒิการศึกษาแบบ GED หรือเทียบเท่า โดยผู้สมัครมีผลสอบ GED ตั้งแต่เดือนพฤษภาคม 2560 เป็นต้นไป ต้องมีผลสอบ GED รวม 4 รายวิชา แต่ละวิชาต้องได้คะแนนอย่างน้อย 145 คะแนน 
+2. ผลการเรียนเฉลี่ยสะสม (GPAX) 4 ภาคเรียน ไม่ต่ำกว่า 2.50 หรือเทียบเท่า  
+3. ผลคะแนนสอบ  ข้อใดข้อหนึ่ง
+   3.1 ผลสอบ SAT Mathematics ไม่ต่ำกว่า 600 คะแนน และ Evidence-Based Reading & Writing รวมกับ Mathematics ไม่ต่ำกว่า 1,000 คะแนน และ คะแนนสอบมาตรฐานรายวิชาภาษาอังกฤษข้อใดข้อหนึ่ง
+   - ผลสอบ TOEFL (IBT) ไม่น้อยกว่า 61 คะแนน หรือเทียบเท่า
+   - ผลสอบ IELTS ไม่น้อยกว่า 5.5 คะแนน หรือเทียบเท่า
+   - ผลสอบ Duolingo ไม่น้อยกว่า 95 คะแนน หรือเทียบเท่า 
+   3.2 ผลการเรียนเฉลี่ยสะสมรายวิชาภาษาอังกฤษ ฟิสิกส์ และคณิตศาสตร์ ในระดับชั้นมัธยมศึกษาปีที่ 4 และ 5 แต่ละวิชาไม่ต่ำกว่า 2.50 จากคะแนนเต็ม 4.00 หรือเทียบเท่า 
+   3.3 สำหรับผู้สมัครที่กำลังศึกษาในปีสุดท้าย หรือสำเร็จการศึกษาระดับมัธยมศึกษาตอนปลายจากต่างประเทศ หรือมีการเทียบวุฒิการศึกษาแบบ GED หรือเทียบเท่าให้ส่งเอกสารที่แสดงว่ากำลังศึกษาในปีสุดท้ายหรือสำเร็จการศึกษา 
+4. ประวัติผลงาน (Portfolio) ความยาวไม่เกิน 10 หน้ากระดาษ A4 (ไม่รวมปก คำนำ สารบัญ) รวม 1 ไฟล์ 
+กำหนดการสัมภาษณ์ (ถ้าผ่านการคัดเลือก): 3 ธ.ค. 67
+เกณฑ์การพิจารณา: 1. ประวัติผลงาน (Portfolio) (ควรมีผลงานตรงกับสาขาที่ต้องการสมัคร เช่น สาขาซอฟต์แวร์ ควรมีผลงานด้าน programming ฯลฯ)
+2. ผลคะแนนภาษาอังกฤษ หรือระดับความสามารถในการใช้ภาษาอังกฤษ
+3. การสอบสัมภาษณ์เป็นภาษาอังกฤษ
+   3.1 คำถามเชิงวิชาการ/การใช้ภาษาอังกฤษ
+   3.2 ทัศนคติและความเหมาะสมในการศึกษา
+
+จากผลลัพธ์ที่ท่านต้องการหา เกณฑ์การรับเข้าศึกษาสาขาวิศวกรรมซอฟต์แวร์และความรู้ (นานาชาติ) รอบ 1/1 นานาชาติ
+ผู้ใช้สามารถตรวจสอบความถูกต้องได้ที่ [อ้างอิง](https://admission.ku.ac.th/majors/project/3/)
+หรือหากคำตอบไม่ตรงกับที่ท่าต้องการ ให้ลองถามด้วยรูปแบบ สาขาวิชา รอบการคัดเลือก โครงการในการเข้า และภาค เช่น วิศวะซอฟต์แวร์และความรู้ รอบ1/1 นานาชาติ ภาคนานาชาติ มีเกณฑ์อะไรบ้าง
+`
 
 function ChatPage() {
     const [messages, setMessages] = useState([
         { text: 'Hello! How can I help you?', type: 'received' },
-        { text: 'Hi, I need some information.', type: 'sent' }
+        { text: 'Hi, I need some information.', type: 'sent' },
+        { text: answerShow, type: 'received' },
+
     ]);
     const [input, setInput] = useState('');
     const [sessionId, setSessionId] = useState('');
@@ -69,17 +98,17 @@ function ChatPage() {
                 {messages.map((msg, index) => (
                     <div key={index} className={`flex items-center mb-3 ${msg.type === 'sent' ? 'justify-end' : 'justify-start'}`}>
                         {msg.type === 'received' && (
-                            <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center mr-2">
+                            <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center mr-2 self-start">
                                 <Icon icon="fluent:bot-20-filled" width="32" height="32" style={{ color: "#0097B2", background:"#D9EBEE" , borderRadius:"50%"}} />
                             </div>
                         )}
                         <div
-                            className={`p-2 rounded-large max-w-xs ${msg.type === 'sent' ? 'bg-kutcas-green-100 text-black rounded-lg rounded-br-none' : 'bg-gray-300 text-black rounded-t-lg rounded-r-lg rounded-bl-none'}`}
+                            className={`p-2 rounded-large max-w-xs ${msg.type === 'sent' ? 'bg-kutcasgreen100 text-black rounded-lg rounded-br-none' : 'bg-gray-300 text-black rounded-t-lg rounded-r-lg rounded-bl-none'}`}
                         >
                             {msg.text}
                         </div>
                         {msg.type === 'sent' && (
-                            <div className="w-8 h-8 bg-kutcas-green-700 rounded-full flex items-center justify-center ml-2 text-white">
+                            <div className="w-8 h-8 bg-kutcasgreen700 rounded-full flex items-center justify-center ml-2 text-white">
                                 U
                             </div>
                         )}
@@ -98,7 +127,7 @@ function ChatPage() {
                     onKeyDown={handleKeyPress}
                 />
                 <button
-                    className="bg-kutcas-green-100 text-black px-4 py-2 rounded-lg hover:text-white hover:bg-kutcas-green-700"
+                    className="bg-kutcasgreen100 text-black px-4 py-2 rounded-lg hover:text-white hover:bg-kutcasgreen700"
                     onClick={sendMessage}
                 >
                     Send

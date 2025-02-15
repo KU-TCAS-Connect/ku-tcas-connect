@@ -96,6 +96,7 @@ async def rag_query(request: QueryRequest):
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
     elif search_table == "not_related":
+        #TODO: call llm without search
         return QueryResponse(response="ตรงนี้เรียก LLM อีกตัวที่ไม่ผ่าน Search (ทำ prompt LLM ตัวนี้ด้วย)")
 
 @app.get("/new-session")

@@ -103,7 +103,7 @@ function ChatPage() {
                             </div>
                         )}
                         <div
-                            className={`p-2 rounded-large max-w-xs ${msg.type === 'sent' ? 'bg-kutcasgreen100 text-black rounded-lg rounded-br-none' : 'bg-gray-300 text-black rounded-t-lg rounded-r-lg rounded-bl-none'}`}
+                            className={`p-2 rounded-large max-w-xs ${msg.type === 'sent' ? 'bg-kutcasgreen100 text-black rounded-lg rounded-br-none' : 'bg-gray-300 bg-kutcasgreen100 text-black rounded-t-lg rounded-r-lg rounded-bl-none'}`}
                         >
                             {msg.text}
                         </div>

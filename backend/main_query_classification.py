@@ -19,6 +19,5 @@ def query_classification(query):
         search_table = "csv"
     elif category == "not_related":
         print("Bypass search in Vector Database")
-        search_table = "none"
-
+        search_table = "not_related"
     return search_table

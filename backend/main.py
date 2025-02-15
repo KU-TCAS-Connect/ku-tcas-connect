@@ -23,7 +23,7 @@ chat_histories: Dict[str, List[Dict[str, str]]] = {}
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -82,6 +82,7 @@ def rag_pipeline_txt(query: str, session_id: str) -> str:
 @app.post("/rag-query", response_model=QueryResponse)
 async def rag_query(request: QueryRequest):
     search_table = query_classification(request.query)
+    print("asdasd:", search_table)
     if search_table == "csv":
         try:
             response = rag_pipeline_csv(request.query, request.session_id)
@@ -94,13 +95,8 @@ async def rag_query(request: QueryRequest):
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
-    elif search_table == "none":
-        pass
-        # try:
-        #     response = rag_pipeline_llm(request.query, request.session_id)
-        #     return QueryResponse(response=response)
-        # except Exception as e:
-        #     raise HTTPException(status_code=500, detail=str(e))
+    elif search_table == "not_related":
+        return QueryResponse(response="ตรงนี้เรียก LLM อีกตัวที่ไม่ผ่าน Search (ทำ prompt LLM ตัวนี้ด้วย)")
 
 @app.get("/new-session")
 async def new_session():

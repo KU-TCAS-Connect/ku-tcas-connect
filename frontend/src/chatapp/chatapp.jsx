@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/navbar';
 import { Icon } from "@iconify/react";
 
 function ChatPage() {
     const [messages, setMessages] = useState([
         { text: 'Hello! How can I help you?', type: 'received' },
-        { text: 'Hi, I need some information.', type: 'sent' }
+        { text: 'Hi, I need some information.', type: 'sent' },
     ]);
     const [input, setInput] = useState('');
     const [sessionId, setSessionId] = useState('');
@@ -69,17 +69,17 @@ function ChatPage() {
                 {messages.map((msg, index) => (
                     <div key={index} className={`flex items-center mb-3 ${msg.type === 'sent' ? 'justify-end' : 'justify-start'}`}>
                         {msg.type === 'received' && (
-                            <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center mr-2">
+                            <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center mr-2 self-start">
                                 <Icon icon="fluent:bot-20-filled" width="32" height="32" style={{ color: "#0097B2", background:"#D9EBEE" , borderRadius:"50%"}} />
                             </div>
                         )}
                         <div
-                            className={`p-2 rounded-large max-w-xs ${msg.type === 'sent' ? 'bg-kutcas-green-100 text-black rounded-lg rounded-br-none' : 'bg-gray-300 text-black rounded-t-lg rounded-r-lg rounded-bl-none'}`}
+                            className={`p-2 rounded-large max-w-xs ${msg.type === 'sent' ? 'bg-kutcasgreen100 text-black rounded-lg rounded-br-none' : 'bg-gray-300 bg-kutcasgreen100 text-black rounded-t-lg rounded-r-lg rounded-bl-none'}`}
                         >
                             {msg.text}
                         </div>
                         {msg.type === 'sent' && (
-                            <div className="w-8 h-8 bg-kutcas-green-700 rounded-full flex items-center justify-center ml-2 text-white">
+                            <div className="w-8 h-8 bg-kutcasgreen700 rounded-full flex items-center justify-center ml-2 text-white">
                                 U
                             </div>
                         )}
@@ -98,7 +98,7 @@ function ChatPage() {
                     onKeyDown={handleKeyPress}
                 />
                 <button
-                    className="bg-kutcas-green-100 text-black px-4 py-2 rounded-lg hover:text-white hover:bg-kutcas-green-700"
+                    className="bg-kutcasgreen100 text-black px-4 py-2 rounded-lg hover:text-white hover:bg-kutcasgreen700"
                     onClick={sendMessage}
                 >
                     Send

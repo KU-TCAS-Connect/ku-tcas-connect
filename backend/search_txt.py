@@ -97,3 +97,8 @@ def main_search_and_answer_txt(user_question, chat_history):
     )
     print("Answer Question:", response.answer)
     return response.answer
+
+if __name__ == "__main__":
+    question = "ถามคำถาม"
+    chat_history = []
+    main_search_and_answer_txt(user_question=question, chat_history=chat_history)

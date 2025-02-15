@@ -141,3 +141,7 @@ def main_search_and_answer_csv(user_question, chat_history):
 
     return response.answer
 
+if __name__ == "__main__":
+    question = "ถามคำถาม"
+    chat_history = []
+    main_search_and_answer_csv(user_question=question, chat_history=chat_history)

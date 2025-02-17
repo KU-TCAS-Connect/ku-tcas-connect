@@ -82,7 +82,7 @@ def rag_pipeline_txt(query: str, session_id: str) -> str:
 @app.post("/rag-query", response_model=QueryResponse)
 async def rag_query(request: QueryRequest):
     search_table = query_classification(request.query)
-    print("asdasd:", search_table)
+    print("query classify as:", search_table)
     if search_table == "csv":
         try:
             response = rag_pipeline_csv(request.query, request.session_id)

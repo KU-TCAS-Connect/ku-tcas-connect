@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict
-from backend.services.llm_answer_csv import AnswerQuestion
+from backend.services.llm_answer_not_related import AnswerQuestion
 from search_txt import main_search_and_answer_txt
 from main_query_classification import query_classification
 from search_csv import main_search_and_answer_csv
@@ -57,6 +57,14 @@ def rag_pipeline_txt(query: str, session_id: str) -> str:
 
     return answer
 
+def llm_completion(query: str, session_id: str) -> str:
+    history = chat_histories.get(session_id, [])
+    
+    answer = AnswerQuestion.generate_response(question=query, history=history)
+    chat_histories[session_id] = history
+    
+    return answer
+
 # def rag_pipeline_llm(query: str, session_id: str) -> str:
 #     """Generates an open-ended response while keeping track of conversation history."""
 #     history = chat_histories.get(session_id, [])
@@ -96,7 +104,11 @@ async def rag_query(request: QueryRequest):
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
     elif search_table == "not_related":
-        return QueryResponse(response="ตรงนี้เรียก LLM อีกตัวที่ไม่ผ่าน Search (ทำ prompt LLM ตัวนี้ด้วย)")
+        try:
+            response = llm_completion(request.query, request.session_id)
+            return QueryResponse(response=response)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/new-session")
 async def new_session():

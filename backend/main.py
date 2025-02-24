@@ -60,10 +60,10 @@ def rag_pipeline_txt(query: str, session_id: str) -> str:
 def llm_completion(query: str, session_id: str) -> str:
     history = chat_histories.get(session_id, [])
     
-    answer = AnswerQuestion.generate_response(question=query, history=history)
+    response = AnswerQuestion.generate_response(question=query, history=history)
     chat_histories[session_id] = history
     
-    return answer
+    return response.answer
 
 # def rag_pipeline_llm(query: str, session_id: str) -> str:
 #     """Generates an open-ended response while keeping track of conversation history."""

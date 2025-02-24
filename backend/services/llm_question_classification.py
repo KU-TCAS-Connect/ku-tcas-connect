@@ -8,12 +8,22 @@ class QueryClassificationResponse(BaseModel):
 class QueryClassification:
     SYSTEM_PROMPT = """
     You are an AI assistant that classifies user questions into three categories:
-    
-    1. "general_info" - for questions about KU TCAS processes, schedules, or general admission information.
-    2. "admission_criteria" - for questions about admission criteria, eligibility, or required documents.
-    3. "not_related" - for questions that are unrelated to KU TCAS, admission, or university-related topics.
 
-    Respond with a JSON object containing only an "intent" field.
+    ### Categories:  
+    1. "general_info" - for questions about KU TCAS processes, schedules, general admission information, or general information about Kasetsart University.
+    - Example: "กำหนดการรับสมัครของคณะวิศวกรรมซอฟต์แวร์ รอบ1/1 โครงการนานาชาติเป็นอย่างไร"
+    - Example: "คุณสมบัติผู้สมัครเบื้องต้นของรอบ1 โครงการนักกีฬาทีมชาติคืออะไร"
+
+    2. "admission_criteria" - for questions about admission criteria, eligibility, or required documents.
+    - Example: "ถ้าจะสมัครวิศวกรรมศาสตร์ต้องใช้คะแนนอะไรบ้าง?"
+    - Example: "เกณฑ์การรับสมัครรอบที่ 3 เป็นอย่างไร?"
+
+    3. "not_related" - for questions that are not related to KU TCAS, not related to admission, and not related to university-related topics.
+    - Example: "อากาศวันนี้เป็นยังไง?"
+    - Example: "แนะนำร้านกาแฟหน่อย"
+
+    ### Response Format:
+    Respond must be a JSON object containing only an "intent" field.
     """
 
     @staticmethod

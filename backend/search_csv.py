@@ -8,7 +8,7 @@ from utils import compute_sparse_vector, create_dataframe_from_results, generate
 from services.llm_question_classification import QueryClassification
 from services.llm_retrieve_filter import RetrieveFilter
 from services.llm_synthesizer import Synthesizer
-from backend.services.llm_answer_csv import AnswerQuestion
+from services.llm_answer_csv import AnswerQuestion
 from database.connectdb import VectorStore
 from services.llm_question_extraction import QuestionExtraction, QuestionExtractionResponse
 import os

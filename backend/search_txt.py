@@ -3,7 +3,7 @@ from qdrant_client import QdrantClient, models
 from qdrant_client.models import Filter, FieldCondition, MatchValue
 
 from utils import compute_sparse_vector, create_dataframe_from_results, generate_bge_embedding
-from backend.services.llm_answer_txt import AnswerQuestion
+from services.llm_answer_txt import AnswerQuestion
 from services.llm_retrieve_filter import RetrieveFilter
 from services.llm_question_extraction import QuestionExtraction, QuestionExtractionResponse
 from database.connectdb import VectorStore

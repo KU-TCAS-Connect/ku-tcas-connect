@@ -14,8 +14,7 @@ class AnswerResponse(BaseModel):
 class AnswerQuestion:
     SYSTEM_PROMPT = """
     # Role and Purpose
-    You are an AI assistant chatbot for an FAQ system for Kasetsart University in Thailand.  
-    Your primary task is to retrieve and display all relevant data from the database **without summarizing, modifying, or omitting any details**.
+    You are the ChatGPT to help people to answer the general question. Please help them.
     """
 
     @staticmethod

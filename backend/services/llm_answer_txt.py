@@ -53,7 +53,7 @@ class AnswerQuestion:
     - If the user asks about general admission details, provide a concise answer based on the given data.
     
     # Step 3: Language Handling
-    - Detect the language of the user’s question.
+    - Detect the language of the user's question.
     - If the question is in **Thai**, respond in **Thai**.
     - If the question is in **English**, respond in **English**.
 
@@ -68,9 +68,9 @@ class AnswerQuestion:
 
     - **For general questions**, return only the relevant extracted information.
 
-    ### If no matching data is found:
+    ### If not found relevant data:
     - Thai: "ไม่พบข้อมูล กรุณาตรวจสอบที่ (https://admission.ku.ac.th)"
-    - English: "No information found. Please check (https://admission.ku.ac.th)."
+    - English: "No relevant information found. Please check (https://admission.ku.ac.th)."
     
     ## Example Cases
     1. User Question: "รอบ1 โครงการนานาชาติ สอบสัมภาษณ์วันไหน"
@@ -78,7 +78,7 @@ class AnswerQuestion:
     - Response: "วันที่สอบสัมภาษณ์ ของรอบ1 โครงการนานาชาติคือ 3-4 ธ.ค. 2567"
     
     2. User Question: "Does KU offer a full scholarship for all students?"
-    - Database Entry: No exact match found.
+    - Database Entry: No relevant information found.
     - Response: "We not found the criteria that you want. Please check from KU TCAS Website (https://admission.ku.ac.th)"
     """
 

@@ -48,7 +48,7 @@ def main_search_and_answer_txt(user_question, chat_history):
     query = user_question
     print(f"Received query: {query}")
 
-    search_result = hybrid_search_txt_documents(query=query, top_k=1)
+    search_result = hybrid_search_txt_documents(query=query, top_k=2)
 
     ################### Print the search results (Retrieve Document) ####################
     print("#################### Print the search results (Retrieve Document) ####################")

@@ -34,19 +34,19 @@ class AnswerQuestion:
             data:
                 วันที่ | กำหนดการ | เว็บไซต์/สถานที่
                     -----|----------|----------------
-                    14 ก.พ. - 13 มี.ค. 2568 | รับสมัคร Online และชำระเงินค่าสมัคร | https://admission.ku.ac.th 
-                    22 เม.ย. 2568 | ประกาศรายชื่อผู้มีสิทธิสอบสัมภาษณ์ | https://admission.ku.ac.th (เวลา 09:00 น.) โดยการ login เข้าระบบรายบุคคล 
-                    25 - 26 เม.ย. 2568 | สอบสัมภาษณ์ | กำหนดการจะแจ้งอีกครั้ง | 
-                    28 เม.ย. 2568 ประกาศรายชื่อผู้ผ่านการสอบสัมภาษณ์ | https://admission.ku.ac.th (เวลา 13:00 น.) โดยการ login เข้าระบบรายบุคคล 
-                    2-3 เม.ค. 2568 | ผู้มีสิทธิเข้าศึกษายืนยันสิทธิในระบบ TCAS | http://www.mytcas.com 
-                    4 เม.ค. 2568 | สละสิทธิเข้าศึกษา | http://www.mytcas.com 
-                    7 เม.ย. 2568 | ประกาศรายชื่อผู้ยืนยันสิทธิรอบที่ 2 | https://admission.ku.ac.th 
+                    14 ก.พ. - 13 มี.ค. 2567 | รับสมัคร Online และชำระเงินค่าสมัคร | https://admission.ku.ac.th 
+                    22 เม.ย. 2567 | ประกาศรายชื่อผู้มีสิทธิสอบสัมภาษณ์ | https://admission.ku.ac.th (เวลา 09:00 น.) โดยการ login เข้าระบบรายบุคคล 
+                    25 - 26 เม.ย. 2567 | สอบสัมภาษณ์ | กำหนดการจะแจ้งอีกครั้ง | 
+                    28 เม.ย. 2567 ประกาศรายชื่อผู้ผ่านการสอบสัมภาษณ์ | https://admission.ku.ac.th (เวลา 13:00 น.) โดยการ login เข้าระบบรายบุคคล 
+                    2-3 เม.ค. 2567 | ผู้มีสิทธิเข้าศึกษายืนยันสิทธิในระบบ TCAS | http://www.mytcas.com 
+                    4 เม.ค. 2567 | สละสิทธิเข้าศึกษา | http://www.mytcas.com 
+                    7 เม.ย. 2567 | ประกาศรายชื่อผู้ยืนยันสิทธิรอบที่ ... | https://admission.ku.ac.th 
             Question and Answer:
                 1. Question: วันที่สอบสัมภาษณ์ วันที่เท่าไหร่
-                Answer: 25 - 26 เม.ย. 2568
+                Answer: 25 - 26 เม.ย. 2567
                 
                 2. Question: เริ่มรับสมัครวันที่เท่าไหร่
-                Answer: 14 ก.พ. - 13 มี.ค. 2568
+                Answer: 14 ก.พ. - 13 มี.ค. 2567
     
     # Step 2: Extract and Answer the User's Question
     - If the user's question asks about a specific event (e.g., interview date, application deadline), extract only the relevant date(s) from the table.

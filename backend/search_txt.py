@@ -109,9 +109,9 @@ def main_search_and_answer_txt(user_question, chat_history):
 
     with open(f"{filename}", "a",  encoding="utf-8") as file:
         for result in search_result.points:
-            print(f"Score: {result.score}")
-            print(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""")
-            print("---------------------------------")
+            file.write(f"Score: {result.score}" + "\n")
+            file.write(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""" + "\n")
+            file.write(f"---------------------------------" + "\n")
             
         file.write(f"--------------------------------- Print Filtered Document ---------------------------------"+"\n")
         file.write(f"Index of Filtered Document:\n")

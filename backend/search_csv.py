@@ -110,7 +110,7 @@ def main_search_and_answer_csv(user_question, chat_history):
 
     ####### LOG #######
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-    filename = f"log/output/{current_time}.txt"
+    filename = f"log/output/csv/{current_time}.txt"
 
     if not os.path.exists(filename):
         open(filename, 'w', encoding="utf-8").close()

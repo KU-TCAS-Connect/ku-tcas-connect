@@ -17,6 +17,7 @@ class QueryClassification:
     2. "admission_criteria" - for questions about admission criteria, eligibility, or required documents.
     - Example: "ถ้าจะสมัครวิศวกรรมศาสตร์ต้องใช้คะแนนอะไรบ้าง?"
     - Example: "เกณฑ์การรับสมัครรอบที่ 3 เป็นอย่างไร?"
+    - Example: "เกณฑ์ในการสอบเข้าวิศวะซอฟต์แวร์รอบที่1 มีทั้งหมดกี่โครงการ"
 
     3. "not_related" - for questions that are not related to KU TCAS, not related to admission, and not related to university-related topics.
     - Example: "อากาศวันนี้เป็นยังไง?"

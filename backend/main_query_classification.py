@@ -17,6 +17,9 @@ def query_classification(query):
     elif category == "admission_criteria":
         print("Search in table csv")
         search_table = "csv"
+    elif category == "count_criteria":
+        print("Search in table csv count_criteria")
+        search_table = "csv_count_criteria"
     elif category == "not_related":
         print("Bypass search in Vector Database")
         search_table = "not_related"

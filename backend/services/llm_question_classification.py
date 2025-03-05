@@ -3,7 +3,7 @@ from typing import Literal
 from services.llm_factory import LLMFactory
 
 class QueryClassificationResponse(BaseModel):
-    intent: Literal["general_info", "admission_criteria", "not_related"]
+    intent: Literal["general_info", "admission_criteria", "count_criteria", "not_related"]
 
 class QueryClassification:
     SYSTEM_PROMPT = """
@@ -22,7 +22,12 @@ class QueryClassification:
     - Example: "เกณฑ์การรับสมัครรอบที่ 3 เป็นอย่างไร?"
     - Example: "เกณฑ์ในการสอบเข้าวิศวะซอฟต์แวร์รอบที่1 มีทั้งหมดกี่โครงการ"
 
-    3. "not_related" - for other questions that not in 2 category which are not related to KU TCAS, not related to admission, and not related to university-related topics.
+    3. "count_criteria" - for questions asking about the number of admission criteria.
+    - Example: "วิศวะเครื่องกล รอบ2 มีกี่เกณฑ์?"
+    - Example: "รอบที่ 3 ของวิศวะซอฟต์แวร์มีเกณฑ์ทั้งหมดกี่ข้อ?"
+    - Example: "มีเงื่อนไขกี่ข้อสำหรับรอบ1 สาขาวิศวกรรมโยธา?"
+    
+    ภ. "not_related" - for other questions that not in 3 category which are not related to KU TCAS, not related to admission, and not related to university-related topics.
     - Example: "อากาศวันนี้เป็นยังไง?"
     - Example: "แนะนำร้านกาแฟหน่อย"
     - Example: "อุณหภูมิตอนนี้"    

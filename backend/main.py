@@ -40,11 +40,11 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     response: str
 
-def rag_pipeline_csv(query: str, session_id: str) -> str:
+def rag_pipeline_csv(query: str, session_id: str, top_k: int) -> str:
     """Generates a response while keeping track of conversation history."""
     history = chat_histories.get(session_id, [])
 
-    answer = main_search_and_answer_csv(query, history)
+    answer = main_search_and_answer_csv(query, history, top_k)
     chat_histories[session_id] = history
     return answer
 
@@ -93,7 +93,7 @@ async def rag_query(request: QueryRequest):
     print("query classify as:", search_table)
     if search_table == "csv":
         try:
-            response = rag_pipeline_csv(request.query, request.session_id)
+            response = rag_pipeline_csv(request.query, request.session_id, top_k=2)
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
@@ -103,12 +103,19 @@ async def rag_query(request: QueryRequest):
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+    elif search_table == "csv_count_criteria":
+        try:
+            response = rag_pipeline_csv(request.query, request.session_id, top_k=4)
+            return QueryResponse(response=response)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
     elif search_table == "not_related":
         try:
             response = llm_completion(request.query, request.session_id)
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+    
 
 @app.get("/new-session")
 async def new_session():

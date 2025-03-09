@@ -151,38 +151,38 @@ online นั้นเป็นโมฆะ
 
 ผู้สมัครไม่ต้องยื่นผลคะแนนสอบมายังมหาวิทยาลัยเกษตรศาสตร์
 
-9.3 Announcement of the Names of Interview Candidates
+9.3 การประกาศรายชื่อผู้มีสิทธิ์สอบสัมภาษณ์
+ผู้ที่ผ่านการตรวจสอบคุณสมบัติของผู้สมัครตามเกณฑ์ จะได้รับการประกาศรายชื่อเป็นผู้มีสิทธิ์สอบสัมภาษณ์
+โดยประกาศรายชื่อ ในวันที่ 22 เมษายน พ.ศ. 2568 ทาง https://admission.ku.ac.th โดยการ login เข้าระบบ
+รายบุคคล ซึ่งรายละเอียดจะแจ้งให้ทราบในวันประกาศรายชื่ออีกครั้ง
+9.4 การสอบสัมภาษณ์
+ผู้ผ่านการคัดเลือกต้องเข้าสอบสัมภาษณ์ ในวันที่ 25 – 26 เมษายน พ.ศ. 2568 (เวลา สถานที่และวิธีการ
+จะประกาศให้ทราบอีกครั้ง) เกณฑ์การสอบสัมภาษณ์ ผ่าน/ไม่ผ่าน หรือตามเกณฑ์ที่สาขาวิชาก าหนด ทั้งนี้ ผู้ไม่มา
+สอบสัมภาษณ์ถือว่าสละสิทธิ์และให้ถือเป็นที่สิ้นสุดกระบวนการคัดเลือก มหาวิทยาลัยจะไม่เรียกผู้ผ่านการคัดเลือก
+ในลำดับสำรองที่เหลือมารายงานตัวเพิ่มเติมไม่ว่ากรณีใด ๆ ทั้งสิ้น
+9.5 การประกาศรายชื่อผู้ผ่านการสอบสัมภาษณ์
+มหาวิทยาลัยเกษตรศาสตร์ประกาศรายชื่อผู้ผ่านการสอบสัมภาษณ์ ภายในวันที่ 28 เมษายน พ.ศ. 2568
+เวลา 13.00 น. เป็นต้นไป ทาง https://admission.ku.ac.th โดยการ login เข้าระบบรายบุคคล พร้อมแจ้งรายละเอียด
+การยืนยันสิทธิ์เข้าศึกษา
+ผลการตัดสินของคณะกรรมการฯ ถือเป็นที่สิ้นสุด
 
-Candidates who pass the qualifications verification will be announced as interview candidates on April 22, 2568 at https://admission.ku.ac.th via login. Details will be provided on the announcement date again.
+9.6 การยืนยันสิทธิ์เข้าศึกษา
+ผู้ผ่านการสอบสัมภาษณ์ ต้องดำเนินการยืนยันสิทธิ์ในระบบ TCAS ในวันที่ 2 – 3 พฤษภาคม พ.ศ. 2568
+ทาง http://www.mytcas.com ตามขั้นตอนที่ ทปอ. กำหนด จึงจะได้รับการประกาศรายชื่อเป็นผู้มีสิทธิ์เข้าศึกษาใน
+มหาวิทยาลัยเกษตรศาสตร์
+9.7 การประกาศรายชื่อผู้ยืนยันสิทธิ์เข้าศึกษา
+ผู้ยืนยันสิทธิ์เข้าศึกษาผ่านระบบ TCAS (รอบที่ 2) ตามขั้นตอนที่ ทปอ. กำหนด จะได้รับการประกาศรายชื่อ
+เป็นผู้มีสิทธิ์เข้าศึกษาในมหาวิทยาลัยเกษตรศาสตร์ โดยจะประกาศในวันที่ 7 พฤษภาคม พ.ศ. 2568 เวลา 13.00 น.
+เป็นต้นไป ทาง https://admission.ku.ac.th
+10. การชำระเงินค่าประกันสิทธิ์การเข้าศึกษา
+โครงการเพชรนนทรีมหาวิทยาลัยเกษตรศาสตร์ประจำปีการศึกษา 2568 ไม่มีการชำระเงินค่าประกันสิทธิ์ใด ๆ
+ล่วงหน้า สำหรับค่าธรรมเนียมการศึกษาให้เป็นไปตามประกาศของมหาวิทยาลัยเกษตรศาสตร์ โดยผู้มีสิทธิ์เข้าศึกษา
+จะต้องดำเนินการขึ้นทะเบียนเป็นนิสิต ตามกำหนดการในปฏิทินกิจกรรมนิสิตใหม่ (KU85) ซึ่งจะประกาศให้ทราบทาง
+https://admission.ku.ac.th อีกครั้งหนึ่ง
 
-9.4 Interview Process
 
-Qualified candidates must attend the interview on April 25 - 26, 2568 (time, location, and process will be announced later). The interview results will be pass/fail or based on criteria set by the respective department. Candidates who do not attend the interview will forfeit their rights and the selection process will be concluded. The university will not call candidates who passed the selection to report again under any circumstances.
 
-9.5 Announcement of Interview Results
-
-Kasetsart University will announce the list of candidates who passed the interview on April 28, 2568 starting from 13:00 at https://admission.ku.ac.th via login with personal details for confirmation of the study rights.
-
-[Page Break]
-
-Committee decisions are final.
-
-9.6 Confirmation of Study Rights
-
-Candidates who passed the interview must confirm their rights via TCAS system on May 2 - 3, 2568 at http://www.mytcas.com as instructed to be eligible to be announced as students with study rights at Kasetsart University.
-
-9.7 Announcement of Confirmed Study Rights Candidates
-
-Candidates confirming their study rights through TCAS system (Round 2) will be announced according to the specified process and will be announced on May 7, 2568 at 13:00.
-
-10. Payment of Study Rights Deposit
-
-For the 2568 academic year, there is no advance payment required for any study rights deposit within the Diamond Cheamatree project at Kasetsart University. Tuition fees will be as announced by the university, and students with study rights must proceed to register as students according to the new student activity calendar (B85), which will be notified via https://admission.ku.ac.th once again.
-
-- Corrected OCR errors in the text.
-- Removed strange characters and corrected formatting.
-
-    1. การยืนยันสิทธิ์เข้าศึกษาในระบบ TCAS
+11. การยืนยันสิทธิ์เข้าศึกษาในระบบ TCAS
 
 11.1 มหาวิทยาลัยเกษตรศาสตร์จะแจ้งรายชือผู้มีสิทธิเข้าศึกษาให้สมาคมทีประชุมอธิการบดีแห่งประเทศไทย
 
@@ -221,17 +221,13 @@ For the 2568 academic year, there is no advance payment required for any study r
 โครงการเพชรนนทรี มหาวิทยาลัยเกษตรศาสตร์ ประจำปีการศึกษา 2568 (TCAS รอบที่ 2 โควตา)
 
 1. 14 ก.พ. - 13 มี.ค. 2568 | รับสมัคร Online และชำระเงินค่าสมัคร ตามกำหนดการ
-   - ทดสอบความถนัดเฉพาะสาขาวิชา ตามเอกสารแนบท้ายประกาศของสาขาวิชา (เฉพาะสาขาที่กำหนดเท่านั้น)
-   - 22 เม.ย. 2568 ประกาศรายชื่อผู้มีสิทธิสอบสัมภาษณ์
-
-2. 25 - 26 เม.ย. 2568 | สอบสัมภาษณ์ กำหนดการจะแจ้งอีกครั้ง
-   - 28 เม.ย. 2568 ประกาศรายชื่อผู้ผ่านการสอบสัมภาษณ์
-
-3. 2 - 3 พ.ค. 2568 ผู้มีสิทธิเข้าศึกษายืนยันสิทธิในระบบ TCAS | http://www.mytcas.com
-
-4. 4 พ.ค. 2568 สละสิทธิเข้าศึกษา http://www.mytcas.com
-
-5. 7 พค. 2568 ประกาศรายชื่อผู้ยืนยันสิทธิรอบที่ 2 https://admission.ku.ac.th
+2. ตามกำหนดการของสาขาวิชา | ทดสอบความถนัดเฉพาะสาขาวิชา (เฉพาะสาขาที่กำหนดเท่านั้น)
+3. 22 เม.ย. 2568 (เวลา 09.00 น.) | ประกาศรายชื่อผู้มีสิทธิสอบสัมภาษณ์ | เอกสารแนบท้ายประกาศ
+4. 25 - 26 เม.ย. 2568 | สอบสัมภาษณ์ | กำหนดการจะแจ้งอีกครั้ง
+5. 28 เม.ย. 2568 (เวลา 13.00 น.)  | ประกาศรายชื่อผู้ผ่านการสอบสัมภาษณ์ โดยการ login เข้าระบบรายบุคคล | https://admission.ku.ac.th
+6. 2 - 3 พ.ค. 2568 | ผู้มีสิทธิเข้าศึกษายืนยันสิทธิในระบบ TCAS | http://www.mytcas.com
+7. 4 พ.ค. 2568 | สละสิทธิเข้าศึกษา | http://www.mytcas.com
+8. 7 พค. 2568 | ประกาศรายชื่อผู้ยืนยันสิทธิรอบที่ 2 | https://admission.ku.ac.th
 
 กรณีมีข้อสงสัยหรือสอบถามข้อมูลเพิ่มเติม สามารถติดต่อได้ที่
 

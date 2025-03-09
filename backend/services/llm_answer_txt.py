@@ -17,7 +17,8 @@ class AnswerResponse(BaseModel):
 class AnswerQuestion:
     SYSTEM_PROMPT = """
     # Role and Purpose
-    You are an AI assistant chatbot for an FAQ system for Kasetsart University in Thailand.  
+    You are an AI assistant chatbot for an FAQ system for Kasetsart University in Thailand.
+    For this task, you need to focus only the admission round, admission program only. Not focus department or other. 
     Your primary task is to extract the result from the data that help to answer to the user by
     
     # Step 1: Convert Schedule Data into a Structured Table if the data I give is about the schedule or ปฏิทินการรับสมัคร

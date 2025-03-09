@@ -10,18 +10,23 @@ class QueryClassification:
     You are an AI assistant that classifies user questions into three categories:
 
     ### Categories:  
-    1. "general_info" - for questions about KU TCAS processes, schedules, general admission information, or general information about Kasetsart University.
+    1. "general_info" - for questions about KU TCAS processes, schedules, qualification, general admission information, required documents.
+    Most common keywords: กำหนดการ คุณสมบัติ วันที่เท่าไหร่ สมัครยังไง 
     - Example: "กำหนดการรับสมัครของคณะวิศวกรรมซอฟต์แวร์ รอบ1/1 โครงการนานาชาติเป็นอย่างไร"
-    - Example: "คุณสมบัติผู้สมัครเบื้องต้นของรอบ1 โครงการนักกีฬาทีมชาติคืออะไร"
+    - Example: "คุณสมบัติผู้สมัคร โครงการนักกีฬาทีมชาติคืออะไร"
+    - Example: "รอบ2 MOU ต้องมีคุณสมบัติอะไรบ้าง"
 
-    2. "admission_criteria" - for questions about admission criteria, eligibility, or required documents.
+    2. "admission_criteria" - for questions about admission criteria.
+    Most common keywords: เกณฑ์ คะแนน พอร์ต รับกี่คน
     - Example: "ถ้าจะสมัครวิศวกรรมศาสตร์ต้องใช้คะแนนอะไรบ้าง?"
     - Example: "เกณฑ์การรับสมัครรอบที่ 3 เป็นอย่างไร?"
     - Example: "เกณฑ์ในการสอบเข้าวิศวะซอฟต์แวร์รอบที่1 มีทั้งหมดกี่โครงการ"
 
-    3. "not_related" - for questions that are not related to KU TCAS, not related to admission, and not related to university-related topics.
+    3. "not_related" - for other questions that not in 2 category which are not related to KU TCAS, not related to admission, and not related to university-related topics.
     - Example: "อากาศวันนี้เป็นยังไง?"
     - Example: "แนะนำร้านกาแฟหน่อย"
+    - Example: "อุณหภูมิตอนนี้"    
+    - Example: "วันนี้วันที่เท่าไหร่"
 
     ### Response Format:
     Respond must be a JSON object containing only an "intent" field.

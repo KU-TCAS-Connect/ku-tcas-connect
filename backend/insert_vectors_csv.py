@@ -33,9 +33,10 @@ def process_and_insert_data(df):
         #     continue 
 
         # Use BGEM3 to generate dense and sparse vectors
-        sentences_1 = [content]  # Use the content of the row for encoding
-
-        output_1 = model.encode(sentences_1, return_dense=True, return_sparse=True, return_colbert_vecs=False)
+        # sentences_1 = [content]  # Use the content of the row for encoding
+        first_4_lines = "\n".join(content.splitlines()[:4])
+        
+        output_1 = model.encode([first_4_lines], return_dense=True, return_sparse=True, return_colbert_vecs=False)
 
         dense_vector = output_1['dense_vecs'][0]
         
@@ -55,7 +56,7 @@ def process_and_insert_data(df):
                 "reference": row['แหล่งที่มา'],
                 "created_at": datetime.now().isoformat(),
             },
-            "contents": content,
+            "contents": first_4_lines,
             "embedding": dense_vector,
         }
 

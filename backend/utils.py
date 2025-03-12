@@ -68,3 +68,16 @@ def compute_sparse_vector(text):
     values = [float(x) for x in list(sparse_vector_dict.values())]
 
     return indices, values
+
+def compute_colbert_vector(text):
+    sentences_1 = [text]  # Use the content of the row for encoding
+    output_1 = model.encode(
+        sentences_1, 
+        return_dense=True, 
+        return_sparse=True, 
+        return_colbert_vecs=True
+    )
+
+    colbert = output_1['colbert_vecs'][0]
+
+    return colbert

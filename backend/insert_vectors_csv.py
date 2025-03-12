@@ -6,7 +6,6 @@ import ast
 from database.connectdb import VectorStore
 from services.bge_embedding import FlagModel
 
-
 vector_class = VectorStore()
 client = vector_class.qdrant_client
 
@@ -17,33 +16,19 @@ def read_csv_data(file_path):
     df = pd.read_csv(file_path)
     return df
 
-def process_and_insert_data(df):
+def process_and_insert_data(df, batch_size=5):
     points = []
     for _, row in df.iterrows():
         admission_round = row.get('round', 'N/A')
         admission_program = row.get('program_type', 'N/A')
         content = row.get('content', 'N/A')
 
-        # try:
-        #     embedding = ast.literal_eval(row['ada_embedding'])
-        #     if not isinstance(embedding, list):
-        #         raise ValueError("Embedding is not a valid list")
-        # except (ValueError, SyntaxError) as e:
-        #     print(f"Error parsing embedding for row {row['สาขาวิชา']}: {e}")
-        #     continue 
-
-        # Use BGEM3 to generate dense and sparse vectors
         sentences_1 = [content]  # Use the content of the row for encoding
-
-        output_1 = model.encode(sentences_1, return_dense=True, return_sparse=True, return_colbert_vecs=False)
+        output_1 = model.encode(sentences_1, return_dense=True, return_sparse=True, return_colbert_vecs=True)
 
         dense_vector = output_1['dense_vecs'][0]
-        
-        print(dense_vector)
-        
-        # Extract the lexical weights (this is your sparse representation)
+        colbert = output_1['colbert_vecs'][0]
         lexical_weights = output_1['lexical_weights'][0]
-        # Convert the lexical weights into a dictionary (index: weight)
         sparse_vector_dict = {token: weight for token, weight in lexical_weights.items()}
 
         data = {
@@ -59,19 +44,19 @@ def process_and_insert_data(df):
             "embedding": dense_vector,
         }
 
-        # Prepare the sparse vector: list of indices and values for sparse vector
         indices = list(sparse_vector_dict.keys())  # Indices of the sparse vector
         values = [float(x) for x in list(sparse_vector_dict.values())]
         sparse_vector = dict(zip(indices, values))
-        # Create the point with the embedding and sparse vector
+
         point = PointStruct(
             id=data["id"],
             vector={
-                "": data["embedding"],  # Dense vector
+                "bge-dense": data["embedding"],  # Dense vector
                 "keywords": vector_class.qdrant_model.SparseVector(  # Sparse vector with "keywords"
                     indices=indices,  # List of indices
                     values=values  # List of values
                 ),
+                "colbert": colbert,
             },
             payload={
                 "major": data["metadata"]["major"],
@@ -84,21 +69,27 @@ def process_and_insert_data(df):
             },
         )
 
-        print(data)
-        print(point)
-        print("-------------------------------------------------------")
         points.append(point)
+        
+        # If the batch size is reached, insert and clear the list
+        if len(points) >= batch_size:
+            client.upsert(
+                collection_name=vector_class.col_setting.collection_name["csv"],
+                points=points
+            )
+            print(f"Inserted {len(points)} records into Qdrant.")
+            points = []  # Clear points for the next batch
+
+    # Insert any remaining points after the loop
     if points:
         client.upsert(
             collection_name=vector_class.col_setting.collection_name["csv"],
             points=points
         )
         print(f"Inserted {len(points)} records into Qdrant.")
-    else:
-        print("No records were inserted due to embedding failures.")
 
 if __name__ == "__main__":
-    create_collection_table = True # Change to true to create new table
+    create_collection_table = True  # Change to true to create new table
     
     if create_collection_table:
         vector_class.create_collection(vector_class.col_setting.collection_name["csv"])
@@ -120,5 +111,5 @@ if __name__ == "__main__":
         '3-0-Admission.csv',
     ]
     for file in csv_list_file:
-        df = read_csv_data(f"data/{file}") 
+        df = read_csv_data(f"data/{file}")
         process_and_insert_data(df)

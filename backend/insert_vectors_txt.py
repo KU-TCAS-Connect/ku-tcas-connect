@@ -73,7 +73,7 @@ def process_and_insert_data(df, admission_info):
             point = PointStruct(
                 id=data["id"],
                 vector={ 
-                    "": data["embedding"],  # Dense vector from BGEM3
+                    "bge-dense": data["embedding"],  # Dense vector from BGEM3
                     "keywords": vector_class.qdrant_model.SparseVector(
                         indices=indices,
                         values=values

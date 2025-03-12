@@ -33,7 +33,7 @@ def hybrid_search_txt_documents(query, top_k=1):
             ),
             models.Prefetch(
                 query=generate_bge_embedding(query),  # <-- dense vector using BGE model
-                using="",
+                using="bge-dense",
                 limit=top_k,
             ),
         ],

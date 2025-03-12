@@ -1,6 +1,6 @@
 import uuid
 from qdrant_client import QdrantClient, models
-from qdrant_client.models import Distance, VectorParams
+from qdrant_client.models import Distance, VectorParams, MultiVectorConfig, MultiVectorComparator
 
 from config.settings import DatabaseSetting, CollectionSetting
 
@@ -25,10 +25,19 @@ class VectorStore:
 
         self.qdrant_client.create_collection(
             collection_name=col_name,
-            vectors_config=VectorParams(
-                size=self.col_setting.vector_size,  # Size for the dense vector (for example)
-                distance=vector_distance
-            ),
+            vectors_config={
+                "bge-dense": VectorParams(
+                    size=self.col_setting.vector_size,  # Size for the dense vector (for example)
+                    distance=vector_distance
+                ),
+                "colbert": VectorParams(
+                    size=1024,
+                    distance=models.Distance.COSINE,
+                    multivector_config=MultiVectorConfig(
+                        comparator=MultiVectorComparator.MAX_SIM,
+                    )
+                ),
+            },
             sparse_vectors_config={
                 "keywords": self.qdrant_model.SparseVectorParams(  # Field name for sparse vectors
                     index=self.qdrant_model.SparseIndexParams(on_disk=False)

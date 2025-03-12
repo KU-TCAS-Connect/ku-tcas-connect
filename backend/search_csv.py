@@ -4,7 +4,7 @@ from qdrant_client.models import Filter, FieldCondition, MatchValue, PointStruct
 
 import datetime
 
-from utils import compute_sparse_vector, create_dataframe_from_results, generate_bge_embedding
+from utils import compute_sparse_vector, create_dataframe_from_results, generate_bge_embedding, compute_colbert_vector
 from services.llm_question_classification import QueryClassification
 from services.llm_retrieve_filter import RetrieveFilter
 from services.llm_synthesizer import Synthesizer
@@ -24,24 +24,26 @@ client = QdrantClient("http://localhost:6333")
 def hybrid_search_csv_documents(query, top_k=2):
     query_indices, query_values = compute_sparse_vector(query)
 
+    prefetch = [
+        models.Prefetch(
+            query=models.SparseVector(indices=query_indices, values=query_values),
+            using="keywords",
+            limit=top_k,
+        ),
+        models.Prefetch(
+            query=generate_bge_embedding(query),  # <-- dense vector using BGE model
+            using="bge-dense",
+            limit=top_k,
+        ),
+    ]
+
     search_result = client.query_points(
         collection_name=vector_class.col_setting.collection_name["csv"],
-        prefetch=[
-            models.Prefetch(
-                query=models.SparseVector(indices=query_indices, values=query_values),
-                using="keywords",
-                limit=top_k,
-            ),
-            models.Prefetch(
-                query=generate_bge_embedding(query),  # <-- dense vector using BGE model
-                using="",
-                limit=top_k,
-            ),
-        ],
+        prefetch=prefetch,
         query=models.FusionQuery(fusion=models.Fusion.RRF),
     )
 
-    return search_result
+    return search_result, prefetch
 
 #################### Main ####################
 
@@ -52,7 +54,15 @@ def main_search_and_answer_csv(user_question, chat_history):
     query = user_question
     print(f"Received query: {query}")
 
-    search_result = hybrid_search_csv_documents(query=query, top_k=2)
+    search_result, prefetch = hybrid_search_csv_documents(query=query, top_k=2)
+    search_result = client.query_points(
+            collection_name=vector_class.col_setting.collection_name["csv"],
+            prefetch=prefetch,
+            query=compute_colbert_vector(query),
+            using="colbert",
+            with_payload=True,
+            limit=10,
+    )
 
     ################### Print the search results (Retrieve Document) ####################
     print("#################### Print the search results (Retrieve Document) ####################")

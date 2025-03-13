@@ -64,7 +64,6 @@ class QuestionExtraction:
         * Remark that if user type international program (นานาชาติ) only by not providing Program of Program Type, 
         please assume to use program and program type as international or นานาชาติ to both.
         
-        
         # Rules
         1. If the user does not provide a **major**, ask the user to provide a major first.
         2. If the user does not provide a **round**, ask the user to provide a round first.
@@ -136,5 +135,18 @@ class QuestionExtraction:
         round_ = llm_response.round
         program = llm_response.program
         program_type = llm_response.program_type
-            
-        return thought_process, major, round_, program, program_type
+
+        # Check completeness
+        missing_fields = []
+        if not major:
+            missing_fields.append("Major (สาขาวิชา)")
+        if not round_:
+            missing_fields.append("Round (รอบการคัดเลือก)")
+        if not program and round_ != 3:  # Assume round 3 defaults to "Admission"
+            missing_fields.append("Program (โครงการ)")
+        if not program_type:
+            missing_fields.append("Program Type (ภาค)")
+
+        is_complete = len(missing_fields) == 0
+        
+        return thought_process, major, round_, program, program_type, is_complete, missing_fields

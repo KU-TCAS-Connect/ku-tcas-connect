@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict
+from services.llm_question_extraction import QuestionExtraction, QuestionExtractionResponse
 from services.llm_answer_not_related import AnswerQuestion
 from search_txt import main_search_and_answer_txt
 from main_query_classification import query_classification
@@ -86,26 +87,48 @@ def llm_completion(query: str, session_id: str) -> str:
 #     chat_histories[session_id] = history
 
 #     return answer
+
+def question_extraction(query):
+    thought_process, major, round_, program, program_type, is_complete, missing_fields = QuestionExtraction.extract(query, QuestionExtractionResponse)
+    print(f"Extract User Question using LLM")
+    print(thought_process)
+    print(f"Major: {major}")
+    print(f"Round: {round_}")
+    print(f"Program: {program}")
+    print(f"Program Type: {program_type}")
+    print(f"Query is complete: {is_complete}")
+    print(f"Missing fileds including: {missing_fields}")
+    return is_complete, missing_fields
     
 @app.post("/rag-query", response_model=QueryResponse)
 async def rag_query(request: QueryRequest):
-    search_table = query_classification(request.query)
+    query = request.query
+    
+    # Query Extraction
+    is_complete, missing_fields = question_extraction(query)
+    if not is_complete:
+        missing_str = ", ".join(missing_fields)
+        return QueryResponse(response=f"โปรดเพิ่มให้ครบด้วย ข้อมูลที่ขาดหายไปคือ {missing_str}")
+
+    # Query Classification
+    search_table = query_classification(query)
     print("query classify as:", search_table)
+    
     if search_table == "csv":
         try:
-            response = rag_pipeline_csv(request.query, request.session_id)
+            response = rag_pipeline_csv(query, request.session_id)
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
     elif search_table == "txt":
         try:
-            response = rag_pipeline_txt(request.query, request.session_id)
+            response = rag_pipeline_txt(query, request.session_id)
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
     elif search_table == "not_related":
         try:
-            response = llm_completion(request.query, request.session_id)
+            response = llm_completion(query, request.session_id)
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))

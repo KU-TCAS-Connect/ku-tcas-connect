@@ -45,14 +45,14 @@ def hybrid_search_csv_documents(query, top_k=2):
 
 #################### Main ####################
 
-def main_search_and_answer_csv(user_question, chat_history):
+def main_search_and_answer_csv(user_question, chat_history, top_k):
     chat_history_list = chat_history  # Initialize chat history
     print("chat_history_list", chat_history_list)
     # query = "วิศวะซอฟต์แวร์และความรู้ รอบ1/1 นานาชาติ ภาคนานาชาติ มีเกณฑ์อะไรบ้าง"
     query = user_question
     print(f"Received query: {query}")
 
-    search_result = hybrid_search_csv_documents(query=query, top_k=2)
+    search_result = hybrid_search_csv_documents(query=query, top_k=top_k)
 
     ################### Print the search results (Retrieve Document) ####################
     print("#################### Print the search results (Retrieve Document) ####################")

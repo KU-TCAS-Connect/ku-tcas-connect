@@ -89,7 +89,8 @@ def llm_completion(query: str, session_id: str) -> str:
     
 @app.post("/rag-query", response_model=QueryResponse)
 async def rag_query(request: QueryRequest):
-    search_table = query_classification(request.query)
+    # search_table = query_classification(request.query)
+    search_table = "csv"
     print("query classify as:", search_table)
     if search_table == "csv":
         try:

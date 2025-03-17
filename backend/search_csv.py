@@ -8,7 +8,7 @@ from utils import compute_sparse_vector, create_dataframe_from_results, generate
 from services.llm_question_classification import QueryClassification
 from services.llm_retrieve_filter import RetrieveFilter
 from services.llm_synthesizer import Synthesizer
-from services.llm_answer import AnswerQuestion
+from services.llm_answer_csv import AnswerQuestion
 from database.connectdb import VectorStore
 from services.llm_question_extraction import QuestionExtraction, QuestionExtractionResponse
 import os
@@ -110,7 +110,7 @@ def main_search_and_answer_csv(user_question, chat_history):
 
     ####### LOG #######
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-    filename = f"log/output/{current_time}.txt"
+    filename = f"log/output/csv/{current_time}.txt"
 
     if not os.path.exists(filename):
         open(filename, 'w', encoding="utf-8").close()

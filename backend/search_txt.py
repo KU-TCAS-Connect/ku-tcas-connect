@@ -2,12 +2,15 @@ from dotenv import load_dotenv
 from qdrant_client import QdrantClient, models
 from qdrant_client.models import Filter, FieldCondition, MatchValue
 
+import datetime
+
 from utils import compute_sparse_vector, create_dataframe_from_results, generate_bge_embedding
-from services.llm_answer import AnswerQuestion
+from services.llm_answer_txt import AnswerQuestion
 from services.llm_retrieve_filter import RetrieveFilter
 from services.llm_question_extraction import QuestionExtraction, QuestionExtractionResponse
 from database.connectdb import VectorStore
 from services.llm_synthesizer import Synthesizer
+import os
 
 load_dotenv()
 
@@ -48,7 +51,7 @@ def main_search_and_answer_txt(user_question, chat_history):
     query = user_question
     print(f"Received query: {query}")
 
-    search_result = hybrid_search_txt_documents(query=query, top_k=1)
+    search_result = hybrid_search_txt_documents(query=query, top_k=2)
 
     ################### Print the search results (Retrieve Document) ####################
     print("#################### Print the search results (Retrieve Document) ####################")
@@ -96,4 +99,37 @@ def main_search_and_answer_txt(user_question, chat_history):
         history=chat_history_list
     )
     print("Answer Question:", response.answer)
+    
+    ####### LOG #######
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+    filename = f"log/output/txt/{current_time}.txt"
+
+    if not os.path.exists(filename):
+        open(filename, 'w', encoding="utf-8").close()
+
+    with open(f"{filename}", "a",  encoding="utf-8") as file:
+        for result in search_result.points:
+            file.write(f"Score: {result.score}" + "\n")
+            # file.write(f"""{result.payload["admission_program"]}\n{result.payload["admission_round"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""" + "\n")
+            file.write(f"""{result.payload.get("admission_program", "")}\n{result.payload.get("admission_round", "N/A")}\n{result.payload.get("contents", "")}\n{result.payload.get("reference", "")}\n""")
+            file.write(f"---------------------------------" + "\n")
+            
+        file.write(f"--------------------------------- Print Filtered Document ---------------------------------"+"\n")
+        file.write(f"Index of Filtered Document:\n")
+        file.write(str(context_str_after_filtered.idx))
+        file.write("\n")
+        file.write(f"Filtered Document Content:\n")
+        file.write(str(context_str_after_filtered.content))
+        file.write("\n")
+        file.write(f"Reason why filter out:\n")
+        file.write(str(context_str_after_filtered.reject_reasons))
+        file.write("\n")
+        file.write(f"--------------------------------- Prepare filtered documents before send to LLM ---------------------------------"+"\n")
+        file.write(f"df_filterd")
+        file.write(str(df_filtered))
+        file.write("\n")
+        file.write(f"--------------------------------- Generate Answer by LLM ---------------------------------"+"\n")
+        file.write(f"Answer Question:\n")
+        file.write(str(response.answer))
+
     return response.answer

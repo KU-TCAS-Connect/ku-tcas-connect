@@ -64,7 +64,7 @@ class QuestionExtraction:
             - ภาษาไทย ปกติ or ภาคภาษาไทย ปกติ
             - ภาษาอังกฤษ or ภาคภาษาอังกฤษ
             - ภาษาต่างประเทศ or ภาคภาษาต่างประเทศ
-        * Remark that if user type international program (นานาชาติ) only by not providing Program of Program Type, 
+        * Remark that if user type international program (นานาชาติ) only by not providing Program or Program Type, 
         please assume to use program and program type as international or นานาชาติ to both.
         
         # Rules
@@ -76,14 +76,7 @@ class QuestionExtraction:
         4. If the user does not provide a **program type**, ask the user to provide the program type first.
         5. User DOES NOT NEED to input Condtion (เงื่อนไขขั้นต่ำ) and Criteria (เกณฑ์การพิจารณา).
 
-        Your response should clearly indicate if the query is complete or if additional information is needed. If additional information is required, specify exactly what the user is missing and ask them to provide it.
-
-        For example:
-        - If a **major** is missing, say "โปรดให้ข้อมูลเพิ่มเติมเกี่ยวกับ สาขาวิชา ที่อยากทราบข้อมูลค่ะ"
-        - If a **round** is missing, say "โปรดให้ข้อมูลเพิ่มเติมเกี่ยวกับ รอบ การรับเข้าที่อยากทราบข้อมูลค่ะ"
-        - If a **program** is missing, say "โปรดให้ข้อมูลเพิ่มเติมเกี่ยวกับ โครงการ การรับเข้าที่อยากทราบข้อมูลค่ะ"
-        - If a **program type** is missing, say "โปรดให้ข้อมูลเพิ่มเติมเกี่ยวกับ ระบบการศึกษาที่อยากทราบข้อมูลค่ะ เช่น ภาคปกติ ภาคพิเศษ ภาคนานาชาติ เป็นต้น"
-        
+        Your response should clearly indicate if the query is complete or if additional information is needed. If additional information is required, specify exactly what the user is missing and ask them to provide it.  
         And if user put question that hard to extract what it is, please tell user to put in format like
         "โปรดให้ข้อมูลตามรูปแบบ สาขาวิชา, ภาค(ปกติ, พิเศษ, นานาชาติ, ภาษาอังกฤษ), รอบการคัดเลือก, และโครงการ เช่นตัวอย่าง
         สาขาวิชา: วศ.บ. สาขาวิชาวิศวกรรมเครื่องกล (ภาษาไทย ปกติ) รอบ 1/2 ช้างเผือก"

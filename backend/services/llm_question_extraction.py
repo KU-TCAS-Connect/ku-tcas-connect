@@ -10,10 +10,13 @@ class QuestionExtractionResponse(BaseModel):
         description="List of thoughts that the AI assistant had while extracting the user query"
     )
     major: str
-    round: int
+    round: int = Field(
+        description="The admission round number",
+        examples=["1", "1/1", "1/2", "2", "3"]
+    )
     program: str
     program_type: str
-
+    
 class QuestionExtraction:
 
     SYSTEM_PROMPT = """

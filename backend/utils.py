@@ -1,4 +1,4 @@
-from FlagEmbedding import BGEM3FlagModel
+from FlagEmbedding import BGEM3FlagModel, FlagReranker
 from services.bge_embedding import FlagModel
 
 import pandas as pd
@@ -11,6 +11,8 @@ flag_class = FlagModel()
 model = flag_class.bge_model
 
 bge_model = BGEM3FlagModel('BAAI/bge-m3', use_fp16=True)
+
+reranker = FlagReranker('BAAI/bge-reranker-v2-m3', use_fp16=True)
 
 def create_dataframe_from_results(results) -> pd.DataFrame:
     data = []
@@ -68,3 +70,14 @@ def compute_sparse_vector(text):
     values = [float(x) for x in list(sparse_vector_dict.values())]
 
     return indices, values
+
+def reranker_process(query, document_list):
+    keep_document_list = [[query, document] for document in document_list]
+    scores = reranker.compute_score(keep_document_list, normalize=True)
+    
+    def sort_by_score(item):
+        return item[1]
+
+    sorted_scores = sorted(enumerate(scores), key=sort_by_score, reverse=True)
+
+    return sorted_scores  # Returns a list of (index, score) tuples

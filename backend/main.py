@@ -106,6 +106,7 @@ async def rag_query(request: QueryRequest):
 
     # Query Classification
     search_table = query_classification(query)
+
     print("query classify as:", search_table)
     
     if search_table == "csv":

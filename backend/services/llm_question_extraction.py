@@ -66,11 +66,6 @@ class QuestionExtraction:
         2. If it's round 3, assume the program is Admission. For other rounds, user needs to provide a program.
         3. User DOES NOT NEED to input Condtion (เงื่อนไขขั้นต่ำ) and Criteria (เกณฑ์การพิจารณา).
 
-        Your response should clearly indicate if the query is complete or if additional information is needed. If additional information is required, specify exactly what the user is missing and ask them to provide it.  
-        And if user put question that hard to extract what it is, please tell user to put in format like
-        "โปรดให้ข้อมูลตามรูปแบบ สาขาวิชา, ภาค(ปกติ, พิเศษ, นานาชาติ, ภาษาอังกฤษ), รอบการคัดเลือก, และโครงการ เช่นตัวอย่าง
-        สาขาวิชา: วศ.บ. สาขาวิชาวิศวกรรมเครื่องกล (ภาษาไทย ปกติ) รอบ 1/2 ช้างเผือก"
-
         Additionally, extract and return the following fields from the user's query:
         1. **Major** (สาขาวิชา/สาขา)
         2. **Round** (รอบการคัดเลือก/รอบ)

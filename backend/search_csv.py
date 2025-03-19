@@ -47,7 +47,7 @@ def hybrid_search_csv_documents(query, top_k=2):
 
 def main_search_and_answer_csv(user_question, chat_history):
     chat_history_list = chat_history  # Initialize chat history
-    print("chat_history_list", chat_history_list)
+    # print("chat_history_list", chat_history_list)
     # query = "วิศวะซอฟต์แวร์และความรู้ รอบ1/1 นานาชาติ ภาคนานาชาติ มีเกณฑ์อะไรบ้าง"
     query = user_question
     print(f"Received query: {query}")
@@ -66,19 +66,19 @@ def main_search_and_answer_csv(user_question, chat_history):
     print("#################### Print the rerank results ####################")
     print("sorted_list_of_index_and_score_rerank:", sorted_list_of_index_and_score_rerank)
 
+    # Extract reranked documents
+    document_from_db_after_rerank = []
     for index, rerank_score in sorted_list_of_index_and_score_rerank:
         result = search_result.points[index]
+        document_content = f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}"""
+        document_from_db_after_rerank.append(document_content)
+
         print(f"Rerank Score: {rerank_score}")
-        print(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""")
+        print(document_content)
         print("---------------------------------")
 
-    # # Extract retrieved documents from search_result
-    # document_from_db_before_filter = []
-    # for result in search_result.points:
-    #     document_content = f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}"""
-    #     document_from_db_before_filter.append(document_content)
-
-    # context_str_after_filtered = RetrieveFilter.filter(query=query, documents=document_from_db_before_filter)
+    # Send reranked documents to filter
+    # context_str_after_filtered = RetrieveFilter.filter(query=query, documents=document_from_db_after_rerank)
 
     # print("--------------------------------- Print Filtered Document ---------------------------------")
     # print("Index of Filtered Document:\n", context_str_after_filtered.idx)

@@ -103,18 +103,17 @@ def question_extraction(query):
 @app.post("/rag-query", response_model=QueryResponse)
 async def rag_query(request: QueryRequest):
     query = request.query
-    
-    # Query Extraction
-    is_complete, missing_fields = question_extraction(query)
-    if not is_complete:
-        missing_str = ", ".join(missing_fields)
-        return QueryResponse(response=f"โปรดเพิ่มให้ครบด้วย ข้อมูลที่ขาดหายไปคือ {missing_str}")
 
     # Query Classification
     search_table = query_classification(query)
     print("query classify as:", search_table)
     
     if search_table == "csv":
+        # Query Extraction
+        is_complete, missing_fields = question_extraction(query)
+        if not is_complete:
+            missing_str = ", ".join(missing_fields)
+            return QueryResponse(response=f"โปรดเพิ่มให้ครบด้วย ข้อมูลที่ขาดหายไปคือ {missing_str}")
         try:
             response = rag_pipeline_csv(query, request.session_id)
             return QueryResponse(response=response)

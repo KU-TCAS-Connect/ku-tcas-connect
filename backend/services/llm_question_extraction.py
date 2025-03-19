@@ -60,8 +60,6 @@ class QuestionExtraction:
             - ภาษาไทย ปกติ or ภาคภาษาไทย ปกติ
             - ภาษาอังกฤษ or ภาคภาษาอังกฤษ
             - ภาษาต่างประเทศ or ภาคภาษาต่างประเทศ
-        * Remark that if user type international program (นานาชาติ) only by not providing Program of Program Type, 
-        please assume to use program and program type as international or นานาชาติ to both.
         
         # Rules
         1. If the user provides only "International Program" (นานาชาติ) in either the Program or Program Type field, assume that both Program Type is "นานาชาติ" and Program is "นานาชาติและภาษาอังกฤษ"

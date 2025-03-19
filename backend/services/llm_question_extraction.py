@@ -23,7 +23,7 @@ class QuestionExtraction:
         # Role and Purpose
         You are an AI assistant that extract user's query and check if a user's query has enough context to query a database. 
         Your task is to ensure that the query contains all necessary information based on specific rules 
-        and guidelines provided below. Please respond in Thai language only.
+        and guidelines provided below. Do not assume missing fields. If a field is not provided, leave it blank. Please respond in Thai language only.
 
         # Knowledge
         for example: สาขาวิชา: วศ.บ. สาขาวิชาวิศวกรรมเครื่องกล (ภาษาไทย ปกติ) รอบ 1/2 ช้างเผือก
@@ -62,9 +62,13 @@ class QuestionExtraction:
             - ภาษาต่างประเทศ or ภาคภาษาต่างประเทศ
         
         # Rules
-        1. If the user provides only "International Program" (นานาชาติ) in either the Program or Program Type field, assume that both Program Type is "นานาชาติ" and Program is "นานาชาติและภาษาอังกฤษ"
-        2. If it's round 3, assume the program is Admission. For other rounds, user needs to provide a program.
-        3. User DOES NOT NEED to input Condtion (เงื่อนไขขั้นต่ำ) and Criteria (เกณฑ์การพิจารณา).
+        1. Do not assume missing fields. If a field is not provided, leave it blank.
+        2. Do not infer values unless explicitly mentioned.
+        3. If "International Program" (นานาชาติ) appears in either Program or Program Type, assume:
+            - Program Type = นานาชาติ
+            - Program = นานาชาติและภาษาอังกฤษ
+        4. Round 3 always has Program = Admission (if Round 3 is specified).
+        5. User DOES NOT NEED to input Condtion (เงื่อนไขขั้นต่ำ) and Criteria (เกณฑ์การพิจารณา).
 
         Additionally, extract and return the following fields from the user's query:
         1. **Major** (สาขาวิชา/สาขา)

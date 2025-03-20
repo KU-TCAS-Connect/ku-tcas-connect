@@ -12,14 +12,20 @@ class QuestionExtractionResponse(BaseModel):
     major: str
     round: int = Field(
         description="The admission round number",
-        examples=["1", "1/1", "1/2", "2", "3"]
+        examples=["1", "2", "3"]
     )
     program: str
     program_type: str
-    
+
+class QuestionExtractionResponseTxt(BaseModel):
+    round: Optional[int] = Field(
+        description="The admission round number, or None if not found",
+        examples=["1", "2", "3"]
+    )
+
 class QuestionExtraction:
 
-    SYSTEM_PROMPT = """
+    SYSTEM_PROMPT_CSV = """
         # Role and Purpose
         You are an AI assistant that extract user's query and check if a user's query has enough context to query a database. 
         Your task is to ensure that the query contains all necessary information based on specific rules 
@@ -75,8 +81,15 @@ class QuestionExtraction:
         Ensure that you mention which information is missing and what the user needs to add to complete the query.
         """
 
+    SYSTEM_PROMPT_TXT = """
+        # Role and Purpose
+        You are an AI assistant that extracts **only the Round number** from a user's query.  
+        You must identify and return one of the following rounds: **1, 1/1, 1/2, 2, 3**.
+        If the round is not found, return an empty value.
+    """
+
     @staticmethod
-    def extract(text, template) -> Tuple[List[str], str, int, str, str]:
+    def extract(text) -> Tuple[List[str], str, int, str, str]:
         llm = LLMFactory("openai")
         # client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -105,10 +118,10 @@ class QuestionExtraction:
         # }
         llm_response = llm.create_completion(
             messages=[
-                {"role": "system", "content": QuestionExtraction.SYSTEM_PROMPT},
+                {"role": "system", "content": QuestionExtraction.SYSTEM_PROMPT_CSV},
                 {"role": "user", "content": "Extract: " + text},
             ],
-            response_model=template,
+            response_model=QuestionExtractionResponse,
         )
         thought_process = llm_response.thought_process
         major = llm_response.major
@@ -130,3 +143,17 @@ class QuestionExtraction:
         is_complete = len(missing_fields) == 0
         
         return thought_process, major, round_, program, program_type, is_complete, missing_fields
+
+    @staticmethod
+    def extract_txt(text) -> Optional[int]:
+        llm = LLMFactory("openai")
+        llm_response = llm.create_completion(
+            messages=[
+                {"role": "system", "content": QuestionExtraction.SYSTEM_PROMPT_TXT},
+                {"role": "user", "content": "Extract: " + text},
+            ],
+            response_model=QuestionExtractionResponseTxt,
+        )
+
+        round_ = llm_response.round
+        return round_ if round_ else None

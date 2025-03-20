@@ -55,7 +55,7 @@ def process_and_insert_data(df, admission_info):
             data = {
                 "id": str(vector_class.uuid_from_time_with_index(datetime.now(), i)),
                 "metadata": {
-                    "admission_round": admission_round,
+                    "admission_round": int(admission_round),
                     "admission_program": admission_program,
                     "reference": reference,
                     "created_at": datetime.now().isoformat(),

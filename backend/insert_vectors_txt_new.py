@@ -40,59 +40,56 @@ def process_and_insert_data(df, admission_info):
         admission_program = admission_info['admission_program']
         reference = admission_info['reference']
 
-        # Chunk text
-        chunks = chunk_text(content, num_chunks=5)
-
+        sentences_1 = [content] 
         # Use BGEM3 to generate dense and sparse vectors
-        output_1 = model.encode(chunks, return_dense=True, return_sparse=True, return_colbert_vecs=False)
+        output_1 = model.encode(sentences_1, return_dense=True, return_sparse=True, return_colbert_vecs=False)
 
-        for i, chunk in enumerate(chunks):
-            lexical_weights = output_1['lexical_weights'][i]
-            sparse_vector_dict = {token: weight for token, weight in lexical_weights.items()}
+        # Use BGEM3 dense vector for embedding
+        dense_vector = output_1['dense_vecs'][0]
+        
+        lexical_weights = output_1['lexical_weights'][0]
+        sparse_vector_dict = {token: weight for token, weight in lexical_weights.items()}
 
-            # Use BGEM3 dense vector for embedding
-            dense_vector = output_1['dense_vecs'][i]
+        data = {
+            "id": str(vector_class.uuid_from_time_with_index(datetime.now(), 0)),
+            "metadata": {
+                "admission_round": admission_round,
+                "admission_program": admission_program,
+                "reference": reference,
+                "created_at": datetime.now().isoformat(),
+                "filename": filename,  # Add the filename to the metadata
+                # "chunk_number": i + 1,
+            },
+            "contents": content,
+            "embedding": dense_vector,  # Use BGEM3 dense vector
+        }
 
-            data = {
-                "id": str(vector_class.uuid_from_time_with_index(datetime.now(), i)),
-                "metadata": {
-                    "admission_round": admission_round,
-                    "admission_program": admission_program,
-                    "reference": reference,
-                    "created_at": datetime.now().isoformat(),
-                    "filename": filename,  # Add the filename to the metadata
-                    "chunk_number": i + 1,
-                },
-                "contents": chunk,
-                "embedding": dense_vector,  # Use BGEM3 dense vector
-            }
+        indices = list(sparse_vector_dict.keys())
+        values = [float(x) for x in sparse_vector_dict.values()]
+        sparse_vector = dict(zip(indices, values))
 
-            indices = list(sparse_vector_dict.keys())
-            values = [float(x) for x in sparse_vector_dict.values()]
-            sparse_vector = dict(zip(indices, values))
-
-            point = PointStruct(
-                id=data["id"],
-                vector={ 
-                    "": data["embedding"],  # Dense vector from BGEM3
-                    "keywords": vector_class.qdrant_model.SparseVector(
-                        indices=indices,
-                        values=values
-                    ),
-                },
-                payload={ 
-                    "admission_round": data["metadata"]["admission_round"],
-                    "admission_program": data["metadata"]["admission_program"],
-                    "reference": data["metadata"]["reference"],
-                    "created_at": data["metadata"]["created_at"],
-                    "filename": data["metadata"]["filename"],  # Add filename to the payload
-                    "chunk_number": data["metadata"]["chunk_number"],  # Add chunk number to the payload
-                    "contents": data["contents"],
-                    "lexical_weights": sparse_vector,
-                },
-            )
-            
-            points.append(point)
+        point = PointStruct(
+            id=data["id"],
+            vector={ 
+                "": data["embedding"],  # Dense vector from BGEM3
+                "keywords": vector_class.qdrant_model.SparseVector(
+                    indices=indices,
+                    values=values
+                ),
+            },
+            payload={ 
+                "admission_round": data["metadata"]["admission_round"],
+                "admission_program": data["metadata"]["admission_program"],
+                "reference": data["metadata"]["reference"],
+                "created_at": data["metadata"]["created_at"],
+                "filename": data["metadata"]["filename"],  # Add filename to the payload
+                # "chunk_number": data["metadata"]["chunk_number"],  # Add chunk number to the payload
+                "contents": data["contents"],
+                "lexical_weights": sparse_vector,
+            },
+        )
+        
+        points.append(point)
     if points:
         client.upsert(
             collection_name=vector_class.col_setting.collection_name["txt"],
@@ -107,8 +104,6 @@ if __name__ == "__main__":
     
     if create_collection_table:
         vector_class.create_collection(vector_class.col_setting.collection_name["txt"])
-
-    # num_chunks = 5 # how many chunk we want?
 
     admission_info_mapping = {
         '1-0-เรียนล่วงหน้า': {
@@ -202,6 +197,7 @@ if __name__ == "__main__":
                 # print(admission_info_mapping[name_get_detail])
                 
                 admission_info = admission_info_mapping.get(name_get_detail)
+                # print(admission_info)
                 if admission_info:
                     with open(f"{folder_path}/{filename}", "r", encoding="utf-8") as f:
                         content = f.read()
@@ -209,12 +205,13 @@ if __name__ == "__main__":
                     # Assuming you want to process the content as part of the DataFrame
                     df = pd.DataFrame({'content': [content], 'filename': [name_get_detail]})
                     print(df)
-                    # process_and_insert_data(df, admission_info)
+                    process_and_insert_data(df, admission_info)
+                    print(f"Already insert")
                 else:
                     print(f"No admission info found for {filename}")
 
             else:
                 print("File name error (not equal to 4)")
-            print("Split parts:", split_parts)
+            # print("Split parts:", split_parts)
             print("-----------------------------------")
             

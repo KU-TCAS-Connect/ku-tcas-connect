@@ -136,9 +136,9 @@ class QuestionExtraction:
         if not round_:
             missing_fields.append("Round (รอบการคัดเลือก)")
         if not program and round_ != 3:  # Assume round 3 defaults to "Admission"
-            missing_fields.append("Program (โครงการ)")
+            missing_fields.append("Program (โครงการ) เช่น ช้างเผือก, admission")
         if not program_type:
-            missing_fields.append("Program Type (ภาค)")
+            missing_fields.append("Program Type (ภาค) เช่น ปกติ, พิเศษ, นานาชาติ")
 
         is_complete = len(missing_fields) == 0
         

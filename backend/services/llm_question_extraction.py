@@ -10,8 +10,8 @@ class QuestionExtractionResponse(BaseModel):
         description="List of thoughts that the AI assistant had while extracting the user query"
     )
     major: str
-    round: int = Field(
-        description="The admission round number",
+    round: Optional[int] = Field(
+        description="The admission round number, or None if not found",
         examples=["1", "2", "3"]
     )
     program: str
@@ -126,6 +126,7 @@ class QuestionExtraction:
         thought_process = llm_response.thought_process
         major = llm_response.major
         round_ = llm_response.round
+        print("round_", round_)
         program = llm_response.program
         program_type = llm_response.program_type
 

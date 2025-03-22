@@ -127,17 +127,17 @@ if __name__ == "__main__":
             'reference':"https://admission.ku.ac.th/media/announcements/2024/10/03/68-TCAS1-Sport_1.1.pdf"
         },
         '1-1-ช้างเผือก': {
-            'admission_round': "1/1",
+            'admission_round': "1",
             'admission_program': "ช้างเผือก",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/02/68_TCAS1_White_Elephant_1.1.pdf"
         },
         '1-2-ช้างเผือก': {
-            'admission_round': "1/2",
+            'admission_round': "1",
             'admission_program': "ช้างเผือก",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/07/68_TCAS1_White_Elephant_1.2.pdf"
         },
         '2-0-เพชรนนทรี': {
-            'admission_round': "1",
+            'admission_round': "2",
             'admission_program': "เพชรนนทรี",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/12/26/68-TCAS2-Diamond_Nontri.pdf"
         },

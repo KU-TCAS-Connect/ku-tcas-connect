@@ -2,9 +2,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict
+from main_query_classification import query_classification
 from services.llm_answer_not_related import AnswerQuestion
 from search_txt import main_search_and_answer_txt
-from main_query_classification import query_classification
 from search_csv import main_search_and_answer_csv
 from services.llm_synthesizer import Synthesizer
 from uuid import uuid4

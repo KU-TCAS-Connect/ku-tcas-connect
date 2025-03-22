@@ -60,76 +60,76 @@ def main_search_and_answer_txt(user_question, chat_history):
         print(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""")
         print("---------------------------------")
 
-    print("---------------- Extract retrieved documents from search_result --------------------")
-    document_from_db_before_filter = []
-    for result in search_result.points:
-        document_content = f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}"""
-        document_from_db_before_filter.append(document_content)
+    # print("---------------- Extract retrieved documents from search_result --------------------")
+    # document_from_db_before_filter = []
+    # for result in search_result.points:
+    #     document_content = f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}"""
+    #     document_from_db_before_filter.append(document_content)
 
-    context_str_after_filtered = RetrieveFilter.filter(query=query, documents=document_from_db_before_filter)
+    # context_str_after_filtered = RetrieveFilter.filter(query=query, documents=document_from_db_before_filter)
 
-    print("--------------------------------- Print Filtered Document ---------------------------------")
-    print("Index of Filtered Document:\n", context_str_after_filtered.idx)
-    print("Filtered Document Content:\n", context_str_after_filtered.content)
-    print("Reason why filter out:\n", context_str_after_filtered.reject_reasons)
+    # print("--------------------------------- Print Filtered Document ---------------------------------")
+    # print("Index of Filtered Document:\n", context_str_after_filtered.idx)
+    # print("Filtered Document Content:\n", context_str_after_filtered.content)
+    # print("Reason why filter out:\n", context_str_after_filtered.reject_reasons)
 
-    print("--------------------------------- Prepare filtered documents before send to LLM ---------------------------------")
-    filtered_indices_list = context_str_after_filtered.idx
-    filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list]
-    df_of_search_result = create_dataframe_from_results(search_result)
-    df_filtered = df_of_search_result.loc[df_of_search_result.index.isin(filtered_indices_list)]
-    print("df_of_search_result", df_of_search_result)
-    print("df_filterd", df_filtered)
+    # print("--------------------------------- Prepare filtered documents before send to LLM ---------------------------------")
+    # filtered_indices_list = context_str_after_filtered.idx
+    # filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list]
+    # df_of_search_result = create_dataframe_from_results(search_result)
+    # df_filtered = df_of_search_result.loc[df_of_search_result.index.isin(filtered_indices_list)]
+    # print("df_of_search_result", df_of_search_result)
+    # print("df_filterd", df_filtered)
 
-    ################### QuestionExtraction ####################
-    # print("--------------------------------- QuestionExtraction ---------------------------------")
-    # thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
-    # print(f"Extract from User Question using LLM Question Checker")
-    # print(thought_process)
-    # print(f"Major: {major}")
-    # print(f"Round: {round_}")
-    # print(f"Program: {program}")
-    # print(f"Program Type: {program_type}")
+    # ################### QuestionExtraction ####################
+    # # print("--------------------------------- QuestionExtraction ---------------------------------")
+    # # thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
+    # # print(f"Extract from User Question using LLM Question Checker")
+    # # print(thought_process)
+    # # print(f"Major: {major}")
+    # # print(f"Round: {round_}")
+    # # print(f"Program: {program}")
+    # # print(f"Program Type: {program_type}")
 
-    ################### Generate Answer by LLM ####################
-    print("--------------------------------- Generate Answer by LLM ---------------------------------")
-    response = AnswerQuestion.generate_response(
-        question=query, 
-        context=df_filtered, 
-        history=chat_history_list
-    )
-    print("Answer Question:", response.answer)
+    # ################### Generate Answer by LLM ####################
+    # print("--------------------------------- Generate Answer by LLM ---------------------------------")
+    # response = AnswerQuestion.generate_response(
+    #     question=query, 
+    #     context=df_filtered, 
+    #     history=chat_history_list
+    # )
+    # print("Answer Question:", response.answer)
     
-    ####### LOG #######
-    current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-    filename = f"log/output/txt/{current_time}.txt"
+    # ####### LOG #######
+    # current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+    # filename = f"log/output/txt/{current_time}.txt"
 
-    if not os.path.exists(filename):
-        open(filename, 'w', encoding="utf-8").close()
+    # if not os.path.exists(filename):
+    #     open(filename, 'w', encoding="utf-8").close()
 
-    with open(f"{filename}", "a",  encoding="utf-8") as file:
-        for result in search_result.points:
-            file.write(f"Score: {result.score}" + "\n")
-            # file.write(f"""{result.payload["admission_program"]}\n{result.payload["admission_round"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""" + "\n")
-            file.write(f"""{result.payload.get("admission_program", "")}\n{result.payload.get("admission_round", "N/A")}\n{result.payload.get("contents", "")}\n{result.payload.get("reference", "")}\n""")
-            file.write(f"---------------------------------" + "\n")
+    # with open(f"{filename}", "a",  encoding="utf-8") as file:
+    #     for result in search_result.points:
+    #         file.write(f"Score: {result.score}" + "\n")
+    #         # file.write(f"""{result.payload["admission_program"]}\n{result.payload["admission_round"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""" + "\n")
+    #         file.write(f"""{result.payload.get("admission_program", "")}\n{result.payload.get("admission_round", "N/A")}\n{result.payload.get("contents", "")}\n{result.payload.get("reference", "")}\n""")
+    #         file.write(f"---------------------------------" + "\n")
             
-        file.write(f"--------------------------------- Print Filtered Document ---------------------------------"+"\n")
-        file.write(f"Index of Filtered Document:\n")
-        file.write(str(context_str_after_filtered.idx))
-        file.write("\n")
-        file.write(f"Filtered Document Content:\n")
-        file.write(str(context_str_after_filtered.content))
-        file.write("\n")
-        file.write(f"Reason why filter out:\n")
-        file.write(str(context_str_after_filtered.reject_reasons))
-        file.write("\n")
-        file.write(f"--------------------------------- Prepare filtered documents before send to LLM ---------------------------------"+"\n")
-        file.write(f"df_filterd")
-        file.write(str(df_filtered))
-        file.write("\n")
-        file.write(f"--------------------------------- Generate Answer by LLM ---------------------------------"+"\n")
-        file.write(f"Answer Question:\n")
-        file.write(str(response.answer))
+    #     file.write(f"--------------------------------- Print Filtered Document ---------------------------------"+"\n")
+    #     file.write(f"Index of Filtered Document:\n")
+    #     file.write(str(context_str_after_filtered.idx))
+    #     file.write("\n")
+    #     file.write(f"Filtered Document Content:\n")
+    #     file.write(str(context_str_after_filtered.content))
+    #     file.write("\n")
+    #     file.write(f"Reason why filter out:\n")
+    #     file.write(str(context_str_after_filtered.reject_reasons))
+    #     file.write("\n")
+    #     file.write(f"--------------------------------- Prepare filtered documents before send to LLM ---------------------------------"+"\n")
+    #     file.write(f"df_filterd")
+    #     file.write(str(df_filtered))
+    #     file.write("\n")
+    #     file.write(f"--------------------------------- Generate Answer by LLM ---------------------------------"+"\n")
+    #     file.write(f"Answer Question:\n")
+    #     file.write(str(response.answer))
 
-    return response.answer
+    return "response.answer"

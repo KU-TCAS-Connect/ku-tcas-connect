@@ -60,7 +60,7 @@ def main_search_and_answer_csv(user_question, chat_history, round_metadata):
     query = user_question
     print(f"Received query: {query}")
 
-    search_result = hybrid_search_csv_documents(query=query, round_metadata=round_metadata, top_k=5)
+    search_result = hybrid_search_csv_documents(query=query, round_metadata=round_metadata, top_k=3)
 
     ################### Print the search results (Retrieve Document) ####################
     print("#################### Print the search results (Retrieve Document) ####################")

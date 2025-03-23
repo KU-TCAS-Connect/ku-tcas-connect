@@ -101,7 +101,7 @@ def main_search_and_answer_txt(user_question, chat_history, round_metadata):
     df_of_search_result = create_dataframe_from_results(search_result)
     df_filtered = df_of_search_result.loc[df_of_search_result.index.isin(filtered_indices_list)]
     print("df_of_search_result", df_of_search_result)
-    print("df_filterd", df_filtered)
+    print("df_filtered", df_filtered)
 
     ################### Generate Answer by LLM ####################
     print("--------------------------------- Generate Answer by LLM ---------------------------------")
@@ -120,12 +120,36 @@ def main_search_and_answer_txt(user_question, chat_history, round_metadata):
         open(filename, 'w', encoding="utf-8").close()
 
     with open(f"{filename}", "a",  encoding="utf-8") as file:
+        file.write(f"User Question: {user_question}" + "\n" + "\n")
+        file.write(f"########### Search results (Retrieve Document) ###########" + "\n")
         for result in search_result.points:
             file.write(f"Score: {result.score}" + "\n")
             # file.write(f"""{result.payload["admission_program"]}\n{result.payload["admission_round"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""" + "\n")
             file.write(f"""{result.payload.get("admission_program", "")}\n{result.payload.get("admission_round", "N/A")}\n{result.payload.get("contents", "")}\n{result.payload.get("reference", "")}\n""")
             file.write(f"---------------------------------" + "\n")
+        
+        file.write(f"########### Sorted list of index and score rerank ###########" + "\n")
+        file.write(f"sorted_list_of_index_and_score_rerank:, {sorted_list_of_index_and_score_rerank}")
+
+
+        for index, rerank_score in sorted_list_of_index_and_score_rerank:
+            result = search_result.points[index]
+            document_content = f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}"""
+            document_from_db_after_rerank.append(document_content)
+
+            print(f"Rerank Score: {rerank_score}")
+            print(document_content)
+            print("---------------------------------")
             
+        file.write(f"########### Rerank results ###########" + "\n")
+        for index, rerank_score in sorted_list_of_index_and_score_rerank:
+            result = search_result.points[index]
+            document_content = f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}\n"""
+
+            file.write(f"Rerank Score: {rerank_score}" + "\n")
+            file.write(f"{document_content}" + "\n")
+            file.write("---------------------------------" + "\n")
+
         file.write(f"--------------------------------- Print Filtered Document ---------------------------------"+"\n")
         file.write(f"Index of Filtered Document:\n")
         file.write(str(context_str_after_filtered.idx))
@@ -137,7 +161,7 @@ def main_search_and_answer_txt(user_question, chat_history, round_metadata):
         file.write(str(context_str_after_filtered.reject_reasons))
         file.write("\n")
         file.write(f"--------------------------------- Prepare filtered documents before send to LLM ---------------------------------"+"\n")
-        file.write(f"df_filterd")
+        file.write(f"df_filtered")
         file.write(str(df_filtered))
         file.write("\n")
         file.write(f"--------------------------------- Generate Answer by LLM ---------------------------------"+"\n")

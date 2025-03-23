@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict
+from utils import question_extraction_csv, question_extraction_txt
 from services.llm_question_extraction import QuestionExtraction
 from services.llm_answer_not_related import AnswerQuestion
 from search_txt import main_search_and_answer_txt
@@ -87,24 +88,6 @@ def llm_completion(query: str, session_id: str) -> str:
 #     chat_histories[session_id] = history
 
 #     return answer
-
-def question_extraction_csv(query):
-    thought_process, major, round_, program, program_type, is_complete, missing_fields = QuestionExtraction.extract(query)
-    print(f"Extract User Question using LLM")
-    print(thought_process)
-    print(f"Major: {major}")
-    print(f"Round: {round_}")
-    print(f"Program: {program}")
-    print(f"Program Type: {program_type}")
-    print(f"Query is complete: {is_complete}")
-    print(f"Missing fileds including: {missing_fields}")
-    return is_complete, missing_fields, round_
-
-def question_extraction_txt(query):
-    round_ = QuestionExtraction.extract_txt(query)
-    print(f"Extract User Question using LLM")
-    print(f"Round: {round_}")
-    return round_
 
 @app.post("/rag-query", response_model=QueryResponse)
 async def rag_query(request: QueryRequest):

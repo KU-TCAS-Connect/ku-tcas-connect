@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict
-from utils import question_extraction_csv, question_extraction_txt
+from main_question_extraction import question_extraction_csv, question_extraction_txt
 from services.llm_question_extraction import QuestionExtraction
 from services.llm_answer_not_related import AnswerQuestion
 from search_txt import main_search_and_answer_txt

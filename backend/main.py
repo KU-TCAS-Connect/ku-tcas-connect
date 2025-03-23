@@ -110,7 +110,7 @@ async def rag_query(request: QueryRequest):
     classification_question = query_classification(query)
     search_table = classification_question["table"]
     classi_log = classification_question["log"]
-    classi_log.append("query classify as:", search_table)
+    classi_log.append(f"query classify as: {search_table}" + "\n")
     
     save_log_infile(filename, classi_log)
     

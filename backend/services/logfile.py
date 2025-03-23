@@ -13,3 +13,4 @@ def save_log_infile(filename, content:list):
                 for i in item:
                     file.write(i)
                     print(i)
+            file.write("\n")

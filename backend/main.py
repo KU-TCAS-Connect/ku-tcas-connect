@@ -13,7 +13,9 @@ from uuid import uuid4
 from dotenv import load_dotenv
 from database.connectdb import VectorStore
 from qdrant_client import QdrantClient, models
+from services.logfile import save_log_infile
 import os
+import datetime
 
 load_dotenv()
 
@@ -42,22 +44,30 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     response: str
 
-def rag_pipeline_csv(query: str, session_id: str, round_metadata: int) -> str:
+def rag_pipeline_csv(query: str, session_id: str, round_metadata: int, filename: str) -> str:
     """Generates a response while keeping track of conversation history."""
     history = chat_histories.get(session_id, [])
 
     answer = main_search_and_answer_csv(query, history, round_metadata=round_metadata)
+    answer_answer = answer["answer"]
+    answer_log = answer["log"]
+    save_log_infile(filename=filename, content=answer_log)
+    
     chat_histories[session_id] = history
-    return answer
+    return answer_answer
 
-def rag_pipeline_txt(query: str, session_id: str, round_metadata: int | None) -> str:
+def rag_pipeline_txt(query: str, session_id: str, round_metadata: int | None, filename: str) -> str:
     """Generates a response while keeping track of conversation history."""
     history = chat_histories.get(session_id, [])
 
-    answer =  main_search_and_answer_txt(query, history, round_metadata=round_metadata)
+    answer =  main_search_and_answer_txt(query, history, round_metadata=round_metadata, filename=filename)
+    answer_answer = answer["answer"]
+    answer_log = answer["log"]
+    save_log_infile(filename=filename, content=answer_log)
+    
     chat_histories[session_id] = history
 
-    return answer
+    return answer_answer
 
 def llm_completion(query: str, session_id: str) -> str:
     history = chat_histories.get(session_id, [])
@@ -91,28 +101,38 @@ def llm_completion(query: str, session_id: str) -> str:
 
 @app.post("/rag-query", response_model=QueryResponse)
 async def rag_query(request: QueryRequest):
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+    filename = f"log/output/{current_time}.txt"
+    
     query = request.query
 
     # Query Classification
-    search_table = query_classification(query)
-
-    print("query classify as:", search_table)
+    classification_question = query_classification(query)
+    search_table = classification_question["table"]
+    classi_log = classification_question["log"]
+    classi_log.append("query classify as:", search_table)
+    
+    save_log_infile(filename, classi_log)
+    
+    # print("query classify as:", search_table)
     
     if search_table == "csv":
         # Query Extraction
-        is_complete, missing_fields, round_ = question_extraction_csv(query)
+        is_complete, missing_fields, round_, log_list_extract_csv = question_extraction_csv(query)
+        save_log_infile(filename=filename, content=log_list_extract_csv)
         if not is_complete:
             missing_str = ", ".join(missing_fields)
             return QueryResponse(response=f"โปรดเพิ่มให้ครบ ข้อมูลที่ขาดหายไปคือ {missing_str}")
         try:
-            response = rag_pipeline_csv(query, request.session_id, round_metadata=int(round_))
+            response = rag_pipeline_csv(query, request.session_id, round_metadata=int(round_), filename=filename)
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
     elif search_table == "txt":
-        round_ = question_extraction_txt(query)
+        round_, log_list_extract_txt = question_extraction_txt(query)
+        save_log_infile(filename=filename, content=log_list_extract_txt)
         try:
-            response = rag_pipeline_txt(query, request.session_id, round_metadata=round_)
+            response = rag_pipeline_txt(query, request.session_id, round_metadata=round_, filename=filename)
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))

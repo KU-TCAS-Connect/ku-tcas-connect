@@ -101,16 +101,6 @@ def main_search_and_answer_csv(user_question, chat_history, round_metadata):
     print("df_of_search_result", df_of_search_result)
     print("df_filterd", df_filtered)
 
-    # ################## QuestionExtraction ####################
-    # print("--------------------------------- QuestionExtraction ---------------------------------")
-    # thought_process, major, round_, program, program_type = QuestionExtraction.extract(query, QuestionExtractionResponse)
-    # print(f"Extract from User Question using LLM Question Checker")
-    # print(thought_process)
-    # print(f"Major: {major}")
-    # print(f"Round: {round_}")
-    # print(f"Program: {program}")
-    # print(f"Program Type: {program_type}")
-
     ################## Generate Answer by LLM ####################
     print("--------------------------------- Generate Answer by LLM ---------------------------------")
 

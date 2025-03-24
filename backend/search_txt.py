@@ -4,7 +4,7 @@ from qdrant_client.models import Filter, FieldCondition, MatchValue
 
 import datetime
 
-from utils import compute_sparse_vector, create_dataframe_from_results, generate_bge_embedding, reranker_process
+from utils import compute_sparse_vector, create_dataframe_for_rerank, create_dataframe_from_results, generate_bge_embedding, reranker_process
 from services.llm_answer_txt import AnswerQuestion
 from services.llm_retrieve_filter import RetrieveFilter
 from services.llm_question_extraction import QuestionExtraction, QuestionExtractionResponse
@@ -78,6 +78,7 @@ def main_search_and_answer_txt(user_question, chat_history, round_metadata, file
 
     ################### Extract reranked documents ###################
     document_from_db_after_rerank = []
+    reranked_sorted_points = []
     for index, rerank_score in sorted_list_of_index_and_score_rerank:
         result = search_result.points[index]
         document_content = f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}"""
@@ -89,18 +90,18 @@ def main_search_and_answer_txt(user_question, chat_history, round_metadata, file
 
     ################### Send reranked documents to filter ###################
     context_str_after_filtered = RetrieveFilter.filter(query=query, documents=document_from_db_after_rerank)
-
+    filtered_indices_list = context_str_after_filtered.idx
+    filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list] # change to real list of index
+    
     print("--------------------------------- Print Filtered Document ---------------------------------")
-    print("Index of Filtered Document:\n", context_str_after_filtered.idx)
+    print("Index of Filtered Document:\n", filtered_indices_list)
     print("Filtered Document Content:\n", context_str_after_filtered.content)
     print("Reason why filter out:\n", context_str_after_filtered.reject_reasons)
 
-    print("--------------------------------- Prepare filtered documents before send to LLM ---------------------------------")
-    filtered_indices_list = context_str_after_filtered.idx
-    filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list]
-    df_of_search_result = create_dataframe_from_results(search_result)
-    df_filtered = df_of_search_result.loc[df_of_search_result.index.isin(filtered_indices_list)]
-    print("df_of_search_result", df_of_search_result)
+    print("--------------------------------- Prepare filtered adn reranked documents before send to LLM ---------------------------------")
+    df_of_rerank_result = create_dataframe_for_rerank(reranked_sorted_points)
+    df_filtered = df_of_rerank_result.loc[df_of_rerank_result.index.isin(filtered_indices_list)]
+    print("df_of_rerank_result", df_of_rerank_result)
     print("df_filtered", df_filtered)
 
     ################### Generate Answer by LLM ####################
@@ -206,7 +207,7 @@ def main_search_and_answer_txt(user_question, chat_history, round_metadata, file
     
     log_list.append(f"--------------------------------- Print Filtered Document ---------------------------------"+"\n")
     log_list.append(f"Index of Filtered Document:\n")
-    log_list.append(str(context_str_after_filtered.idx))
+    log_list.append(str(filtered_indices_list))
     log_list.append("\n")
     log_list.append(f"Filtered Document Content:\n")
     log_list.append(str(context_str_after_filtered.content))
@@ -225,4 +226,4 @@ def main_search_and_answer_txt(user_question, chat_history, round_metadata, file
     return {
         "answer":response.answer,
         "log": log_list
-        }
+    }

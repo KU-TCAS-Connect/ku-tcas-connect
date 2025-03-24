@@ -89,21 +89,18 @@ def main_search_and_answer_csv(user_question, chat_history, round_metadata):
 
     ################### Send reranked documents to filter ###################
     context_str_after_filtered = RetrieveFilter.filter(query=query, documents=document_from_db_after_rerank)
+    filtered_indices_list = context_str_after_filtered.idx
+    filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list] # change to real list of index
 
     print("--------------------------------- Print Filtered Document ---------------------------------")
-    print("Document number:\n", context_str_after_filtered.idx)
+    print("Document number:\n", filtered_indices_list)
     print("Filtered Document Content:\n", context_str_after_filtered.content)
     print("Reason why filter out:\n", context_str_after_filtered.reject_reasons)
 
-    print("--------------------------------- Prepare filtered documents before send to LLM ---------------------------------")
-    filtered_indices_list = context_str_after_filtered.idx
-    filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list]
-    
+    print("--------------------------------- Prepare filtered and reranked documents before send to LLM ---------------------------------")
     df_of_rerank_result = create_dataframe_for_rerank(reranked_sorted_points)
-    
-    # df_of_search_result = create_dataframe_from_results(search_result)
     df_filtered = df_of_rerank_result.loc[df_of_rerank_result.index.isin(filtered_indices_list)]
-    print("df_of_search_result", df_of_rerank_result)
+    print("df_of_rerank_result", df_of_rerank_result)
     print("df_filtered", df_filtered)
 
     ################## Generate Answer by LLM ####################
@@ -188,7 +185,7 @@ def main_search_and_answer_csv(user_question, chat_history, round_metadata):
 
     log_list.append(f"--------------------------------- Print Filtered Document ---------------------------------"+"\n")
     log_list.append(f"Index of Filtered Document:\n")
-    log_list.append(str(context_str_after_filtered.idx))
+    log_list.append(str(filtered_indices_list))
     log_list.append("\n")
     log_list.append(f"Filtered Document Content:\n")
     log_list.append(str(context_str_after_filtered.content))
@@ -207,5 +204,5 @@ def main_search_and_answer_csv(user_question, chat_history, round_metadata):
     return {
         "answer":response.answer,
         "log": log_list
-        }
+    }
 

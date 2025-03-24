@@ -101,7 +101,7 @@ def llm_completion(query: str, session_id: str) -> str:
 
 @app.post("/rag-query", response_model=QueryResponse)
 async def rag_query(request: QueryRequest):
-    current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filename = f"log/output/{current_time}.txt"
     
     query = request.query

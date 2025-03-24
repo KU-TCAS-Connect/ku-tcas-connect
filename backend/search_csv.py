@@ -166,6 +166,7 @@ def main_search_and_answer_csv(user_question, chat_history, round_metadata):
         search_result_point.append(f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}""" + "\n")
         search_result_point.append(f"---------------------------------" + "\n")
     log_list.append(search_result_point)
+    
     log_list.append(f"########### Sorted list of index and score rerank ###########" + "\n")
     log_list.append(f"sorted_list_of_index_and_score_rerank:, {sorted_list_of_index_and_score_rerank}" + "\n")
 
@@ -178,6 +179,7 @@ def main_search_and_answer_csv(user_question, chat_history, round_metadata):
         rerank_with_doc.append(f"Rerank Score: {rerank_score}" + "\n")
         rerank_with_doc.append(f"{document_content}" + "\n")
         rerank_with_doc.append("---------------------------------" + "\n")
+    log_list.append(rerank_with_doc)
 
     log_list.append(f"--------------------------------- Print Filtered Document ---------------------------------"+"\n")
     log_list.append(f"Index of Filtered Document:\n")

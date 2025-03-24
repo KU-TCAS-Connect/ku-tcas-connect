@@ -94,7 +94,7 @@ def main_search_and_answer_txt(user_question, chat_history, round_metadata, file
     filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list] # change to real list of index
     
     print("--------------------------------- Print Filtered Document ---------------------------------")
-    print("Index of Filtered Document:\n", filtered_indices_list)
+    print("Document number:\n", filtered_indices_list)
     print("Filtered Document Content:\n", context_str_after_filtered.content)
     print("Reason why filter out:\n", context_str_after_filtered.reject_reasons)
 

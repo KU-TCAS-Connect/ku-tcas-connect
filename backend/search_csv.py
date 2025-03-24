@@ -4,7 +4,7 @@ from qdrant_client.models import Filter, FieldCondition, MatchValue, PointStruct
 
 import datetime
 
-from utils import compute_sparse_vector, create_dataframe_from_results, generate_bge_embedding, reranker_process
+from utils import compute_sparse_vector, create_dataframe_for_rerank, create_dataframe_from_results, generate_bge_embedding, reranker_process
 from services.llm_question_classification import QueryClassification
 from services.llm_retrieve_filter import RetrieveFilter
 from services.llm_synthesizer import Synthesizer
@@ -76,10 +76,12 @@ def main_search_and_answer_csv(user_question, chat_history, round_metadata):
 
     ################### Extract reranked documents ###################
     document_from_db_after_rerank = []
+    reranked_sorted_points = []
     for index, rerank_score in sorted_list_of_index_and_score_rerank:
         result = search_result.points[index]
         document_content = f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}"""
         document_from_db_after_rerank.append(document_content)
+        reranked_sorted_points.append(result)
 
         print(f"Rerank Score: {rerank_score}")
         print(document_content)
@@ -89,16 +91,19 @@ def main_search_and_answer_csv(user_question, chat_history, round_metadata):
     context_str_after_filtered = RetrieveFilter.filter(query=query, documents=document_from_db_after_rerank)
 
     print("--------------------------------- Print Filtered Document ---------------------------------")
-    print("Index of Filtered Document:\n", context_str_after_filtered.idx)
+    print("Document number:\n", context_str_after_filtered.idx)
     print("Filtered Document Content:\n", context_str_after_filtered.content)
     print("Reason why filter out:\n", context_str_after_filtered.reject_reasons)
 
     print("--------------------------------- Prepare filtered documents before send to LLM ---------------------------------")
     filtered_indices_list = context_str_after_filtered.idx
     filtered_indices_list = [(int(x) - 1) for x in filtered_indices_list]
-    df_of_search_result = create_dataframe_from_results(search_result)
-    df_filtered = df_of_search_result.loc[df_of_search_result.index.isin(filtered_indices_list)]
-    print("df_of_search_result", df_of_search_result)
+    
+    df_of_rerank_result = create_dataframe_for_rerank(reranked_sorted_points)
+    
+    # df_of_search_result = create_dataframe_from_results(search_result)
+    df_filtered = df_of_rerank_result.loc[df_of_rerank_result.index.isin(filtered_indices_list)]
+    print("df_of_search_result", df_of_rerank_result)
     print("df_filtered", df_filtered)
 
     ################## Generate Answer by LLM ####################

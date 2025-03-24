@@ -38,6 +38,27 @@ def create_dataframe_from_results(results) -> pd.DataFrame:
     # Display the DataFrame
     return df
 
+def create_dataframe_for_rerank(results_list) -> pd.DataFrame:
+    data = []
+    for result in results_list:
+        row = {
+            "id": result.id,
+            "score": result.score,
+            "admission_program": result.payload.get("admission_program", ""),
+            "content": result.payload.get("contents", ""),
+            "reference": result.payload.get("reference", ""),
+        }
+        data.append(row)
+
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
+
+    # Convert id to string for better readability
+    df["id"] = df["id"].astype(str)
+
+    # Display the DataFrame
+    return df
+
 def generate_bge_embedding(text):
     try:
         sentences_1 = [text]

@@ -122,6 +122,8 @@ async def rag_query(request: QueryRequest):
         save_log_infile(filename=filename, content=log_list_extract_csv)
         if not is_complete:
             missing_str = ", ".join(missing_fields)
+            missing_return = [f"โปรดเพิ่มให้ครบ ข้อมูลที่ขาดหายไปคือ {missing_str}"]
+            save_log_infile(filename, missing_return)
             return QueryResponse(response=f"โปรดเพิ่มให้ครบ ข้อมูลที่ขาดหายไปคือ {missing_str}")
         try:
             response = rag_pipeline_csv(query, request.session_id, round_metadata=int(round_), filename=filename)

@@ -29,6 +29,7 @@ class AnswerQuestion:
             - ต้องใช้คะแนน TPAT3 ในการสอบเข้ารอบ1 วิศวะซอฟต์แวร์ไหม
             - สอบสัมภาษณ์วิศวะซอฟต์แวร์ รอบ1 นานาชาติ ถามเกี่ยวกับอะไรบ้าง
         So, you need to retrieve and find the result, and summary to the user and **summarize to the user in the same language as the question**.
+            - The summary must always **include the reference/source** where the data was found.
 
     ## Response Format
     If data is found, present it exactly as stored and include:

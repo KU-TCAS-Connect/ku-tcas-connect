@@ -73,6 +73,9 @@ class QuestionExtraction:
         3. If "International Program" (นานาชาติ) appears in either Program or Program Type, assume:
             - Program Type = นานาชาติ
             - Program = นานาชาติและภาษาอังกฤษ
+            or if "English Program" (ภาษาต่างประเทศ, ภาษาอังกฤษ) appears in either Program or Program Type, assume:
+            - Program Type = ภาษาต่างประเทศ
+            - Program = นานาชาติและภาษาอังกฤษ
         4. Round 3 always has Program = Admission (if Round 3 is specified).
         5. User DOES NOT NEED to input Condtion (เงื่อนไขขั้นต่ำ) and Criteria (เกณฑ์การพิจารณา).
 

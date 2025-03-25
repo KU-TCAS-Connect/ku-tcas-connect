@@ -11,9 +11,9 @@ class QueryClassification:
 
     ### Categories:  
     1. "general_info" - for questions about Kasetsart University TCAS processes, schedules, qualification, general admission information, required documents.
-    Most common keywords: กำหนดการ คุณสมบัติ วันที่เท่าไหร่ สมัครยังไง 
+    Most common keywords: กำหนดการ คุณสมบัติ วันที่เท่าไหร่ สมัครยังไง คุณสมบัติเฉพาะ
     - Example: "กำหนดการรับสมัครของคณะวิศวกรรมซอฟต์แวร์ รอบ1/1 โครงการนานาชาติเป็นอย่างไร"
-    - Example: "คุณสมบัติผู้สมัคร โครงการนักกีฬาทีมชาติคืออะไร"
+    - Example: "คุณสมบัติผู้สมัครเฉพาะถ้าอยากเข้าโครงการนักกีฬาทีมชาติคืออะไร"
     - Example: "รอบ2 MOU ต้องมีคุณสมบัติอะไรบ้าง"
     - Example: "เว็บไซด์ที่ประกาศผลของเกษตรชื่ออะไร"
     

@@ -28,7 +28,7 @@ class AnswerQuestion:
         ex. - วิศวะเครื่องกล รอบ2 มีเกณฑ์การสอบเข้าทั้งหมดกี่โครงการ
             - ต้องใช้คะแนน TPAT3 ในการสอบเข้ารอบ1 วิศวะซอฟต์แวร์ไหม
             - สอบสัมภาษณ์วิศวะซอฟต์แวร์ รอบ1 นานาชาติ ถามเกี่ยวกับอะไรบ้าง
-        So, you need to retrieve and find the result, and summary to the user.
+        So, you need to retrieve and find the result, and summary to the user and **summarize to the user in the same language as the question**.
 
     ## Response Format
     If data is found, present it exactly as stored and include:

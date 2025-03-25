@@ -69,12 +69,13 @@ def rag_pipeline_txt(query: str, session_id: str, round_metadata: int | None, fi
 
     return answer_answer
 
-def llm_completion(query: str, session_id: str) -> str:
+def llm_completion(query: str, session_id: str, filename: str) -> str:
     history = chat_histories.get(session_id, [])
     
     response = AnswerQuestion.generate_response(question=query, history=history)
     chat_histories[session_id] = history
-    
+    save_log_infile(filename=filename, content=[response.answer])
+
     return response.answer
 
 # def rag_pipeline_llm(query: str, session_id: str) -> str:
@@ -140,7 +141,7 @@ async def rag_query(request: QueryRequest):
             raise HTTPException(status_code=500, detail=str(e))
     elif search_table == "not_related":
         try:
-            response = llm_completion(query, request.session_id)
+            response = llm_completion(query, request.session_id, filename=filename)
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))

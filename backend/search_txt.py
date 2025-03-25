@@ -55,7 +55,7 @@ def hybrid_search_txt_documents(query, round_metadata, top_k=1):
 
 #################### Main ####################
 
-def main_search_and_answer_txt(user_question, chat_history, round_metadata, filename):
+def main_search_and_answer_txt(user_question, chat_history, round_metadata):
     chat_history_list = chat_history  # Initialize chat history
 
     # query = "อยากทราบกำหนดการการประกาศผลผู้ผ่านการคัดเลือก"
@@ -83,6 +83,7 @@ def main_search_and_answer_txt(user_question, chat_history, round_metadata, file
         result = search_result.points[index]
         document_content = f"""{result.payload["admission_program"]}\n{result.payload["contents"]}\n{result.payload["reference"]}"""
         document_from_db_after_rerank.append(document_content)
+        reranked_sorted_points.append(result)
 
         print(f"Rerank Score: {rerank_score}")
         print(document_content)
@@ -180,6 +181,7 @@ def main_search_and_answer_txt(user_question, chat_history, round_metadata, file
         search_result_point.append(f"""{result.payload.get("admission_program", "")}\n{result.payload.get("admission_round", "N/A")}\n{result.payload.get("contents", "")}\n{result.payload.get("reference", "")}\n""")
         search_result_point.append(f"---------------------------------" + "\n")
     log_list.append(search_result_point)
+    
     log_list.append(f"########### Sorted list of index and score rerank ###########" + "\n")
     log_list.append(f"sorted_list_of_index_and_score_rerank:, {sorted_list_of_index_and_score_rerank}")
 

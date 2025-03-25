@@ -60,7 +60,7 @@ def rag_pipeline_txt(query: str, session_id: str, round_metadata: int | None, fi
     """Generates a response while keeping track of conversation history."""
     history = chat_histories.get(session_id, [])
 
-    answer =  main_search_and_answer_txt(query, history, round_metadata=round_metadata, filename=filename)
+    answer =  main_search_and_answer_txt(query, history, round_metadata=round_metadata)
     answer_answer = answer["answer"]
     answer_log = answer["log"]
     save_log_infile(filename=filename, content=answer_log)

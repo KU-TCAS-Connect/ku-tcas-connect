@@ -40,6 +40,8 @@ def create_dataframe_from_results(results) -> pd.DataFrame:
 
 def create_dataframe_for_rerank(results_list) -> pd.DataFrame:
     data = []
+    if (not results_list):
+        return pd.DataFrame(data)
     for result in results_list:
         row = {
             "id": result.id,

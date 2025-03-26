@@ -142,11 +142,11 @@ class QuestionExtraction:
         if not major:
             missing_fields.append("Major (สาขาวิชา)")
         if not round_:
-            missing_fields.append("Round (รอบการคัดเลือก)")
+            missing_fields.append("Round (รอบการคัดเลือก)\n  รอบการคัดเลือกที่มี : 1, 1/1, 1/2, 2, 3")
         if not program and round_ != 3:  # Assume round 3 defaults to "Admission"
-            missing_fields.append("Program (โครงการ) เช่น ช้างเผือก, admission")
+            missing_fields.append("Program (โครงการ)\nโครงการรอบ1 : เรียนล่วงหน้า, นานาชาติและภาษาอังกฤษ, โอลิมปิกวิชาการ, ผู้มีความสามารถทางกีฬาดีเด่น, ช้างเผือก\nโครงการรอบ2 : เพชรนนทรี, นานาชาติและภาษาอังกฤษ, ความร่วมมือในการสร้างเครือข่ายทางการศึกษากับมหาวิทยาลัยเกษตรศาสตร์, ลูกพระพิรุณ, โควตา 30 จังหวัด, รับนักเรียนดีเด่นจากโรงเรียนสาธิตแห่งมหาวิทยาลัยเกษตรศาสตร์, ผู้มีความสามารถทางกีฬา\nโครงการรอบ3 : Admission")
         if not program_type:
-            missing_fields.append("Program Type (ภาค) เช่น ปกติ, พิเศษ, นานาชาติ")
+            missing_fields.append("Program Type (ภาค): ปกติ, พิเศษ, นานาชาติ, ภาษาอังกฤษ")
 
         is_complete = len(missing_fields) == 0
         

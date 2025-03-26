@@ -5,8 +5,8 @@ import { BeatLoader, ClipLoader } from "react-spinners";  // Import the spinner
 
 function ChatPage() {
     const [messages, setMessages] = useState([
-        { text: 'Hello! How can I help you?', type: 'received' },
-        { text: 'Hi, I need some information.', type: 'sent' },
+        { text: 'สวัสดี นี่คือน้องคอนเนค แชทบอทที่ช่วยตอบเกี่ยวกับเกณฑ์สอบเข้าคณะวิศวกรรมศาสตร์ มหาวิทยาลัยเกษตรศาสตร์บางเขน กรุณาระบุ สาขาวิชา รอบการคัดเลือก โครงการที่สนใจ และ ภาค(ปกติ/พิเศษ/นานาชาติ) เพื่อความแม่นยำในการตอบ', type: 'received' },
+        // { text: 'Hi, I need some information.', type: 'sent' },
     ]);
     const [input, setInput] = useState('');
     const [sessionId, setSessionId] = useState('');

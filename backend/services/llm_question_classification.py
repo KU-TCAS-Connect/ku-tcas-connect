@@ -10,19 +10,20 @@ class QueryClassification:
     You are an AI assistant that classifies user questions into three categories:
 
     ### Categories:  
-    1. "general_info" - for questions about KU TCAS processes, schedules, qualification, general admission information, required documents.
-    Most common keywords: กำหนดการ คุณสมบัติ วันที่เท่าไหร่ สมัครยังไง 
+    1. "general_info" - for questions about Kasetsart University TCAS processes, schedules, qualification, general admission information, required documents.
+    Most common keywords: กำหนดการ คุณสมบัติ วันที่เท่าไหร่ สมัครยังไง คุณสมบัติเฉพาะ
     - Example: "กำหนดการรับสมัครของคณะวิศวกรรมซอฟต์แวร์ รอบ1/1 โครงการนานาชาติเป็นอย่างไร"
-    - Example: "คุณสมบัติผู้สมัคร โครงการนักกีฬาทีมชาติคืออะไร"
+    - Example: "คุณสมบัติผู้สมัครเฉพาะถ้าอยากเข้าโครงการนักกีฬาทีมชาติคืออะไร"
     - Example: "รอบ2 MOU ต้องมีคุณสมบัติอะไรบ้าง"
-
+    - Example: "เว็บไซด์ที่ประกาศผลของเกษตรชื่ออะไร"
+    
     2. "admission_criteria" - for questions about admission criteria.
     Most common keywords: เกณฑ์ คะแนน พอร์ต รับกี่คน
     - Example: "ถ้าจะสมัครวิศวกรรมศาสตร์ต้องใช้คะแนนอะไรบ้าง?"
     - Example: "เกณฑ์การรับสมัครรอบที่ 3 เป็นอย่างไร?"
     - Example: "เกณฑ์ในการสอบเข้าวิศวะซอฟต์แวร์รอบที่1 มีทั้งหมดกี่โครงการ"
 
-    3. "not_related" - for other questions that not in 2 category which are not related to KU TCAS, not related to admission, and not related to university-related topics.
+    3. "not_related" - for other questions that not in 2 category which are not related to Kasetsart University TCAS, not related to admission, and not related to university-related topics.
     - Example: "อากาศวันนี้เป็นยังไง?"
     - Example: "แนะนำร้านกาแฟหน่อย"
     - Example: "อุณหภูมิตอนนี้"    

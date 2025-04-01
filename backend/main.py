@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict
+from main_question_extraction import question_extraction_csv, question_extraction_txt
+from services.llm_question_extraction import QuestionExtraction
 from services.llm_answer_not_related import AnswerQuestion
 from search_txt import main_search_and_answer_txt
 from main_query_classification import query_classification
@@ -11,7 +13,9 @@ from uuid import uuid4
 from dotenv import load_dotenv
 from database.connectdb import VectorStore
 from qdrant_client import QdrantClient, models
+from services.logfile import save_log_infile
 import os
+import datetime
 
 load_dotenv()
 
@@ -40,29 +44,38 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     response: str
 
-def rag_pipeline_csv(query: str, session_id: str) -> str:
+def rag_pipeline_csv(query: str, session_id: str, round_metadata: int, filename: str) -> str:
     """Generates a response while keeping track of conversation history."""
     history = chat_histories.get(session_id, [])
 
-    answer = main_search_and_answer_csv(query, history)
+    answer = main_search_and_answer_csv(query, history, round_metadata=round_metadata)
+    answer_answer = answer["answer"]
+    answer_log = answer["log"]
+    save_log_infile(filename=filename, content=answer_log)
+    
     chat_histories[session_id] = history
-    return answer
+    return answer_answer
 
-def rag_pipeline_txt(query: str, session_id: str) -> str:
+def rag_pipeline_txt(query: str, session_id: str, round_metadata: int | None, filename: str) -> str:
     """Generates a response while keeping track of conversation history."""
     history = chat_histories.get(session_id, [])
 
-    answer =  main_search_and_answer_txt(query, history)
+    answer =  main_search_and_answer_txt(query, history, round_metadata=round_metadata)
+    answer_answer = answer["answer"]
+    answer_log = answer["log"]
+    save_log_infile(filename=filename, content=answer_log)
+    
     chat_histories[session_id] = history
 
-    return answer
+    return answer_answer
 
-def llm_completion(query: str, session_id: str) -> str:
+def llm_completion(query: str, session_id: str, filename: str) -> str:
     history = chat_histories.get(session_id, [])
     
     response = AnswerQuestion.generate_response(question=query, history=history)
     chat_histories[session_id] = history
-    
+    save_log_infile(filename=filename, content=[response.answer])
+
     return response.answer
 
 # def rag_pipeline_llm(query: str, session_id: str) -> str:
@@ -86,26 +99,49 @@ def llm_completion(query: str, session_id: str) -> str:
 #     chat_histories[session_id] = history
 
 #     return answer
-    
+
 @app.post("/rag-query", response_model=QueryResponse)
 async def rag_query(request: QueryRequest):
-    search_table = query_classification(request.query)
-    print("query classify as:", search_table)
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    filename = f"log/output/{current_time}.txt"
+    
+    query = request.query
+
+    # Query Classification
+    classification_question = query_classification(query)
+    search_table = classification_question["table"]
+    classi_log = classification_question["log"]
+    classi_log.append(f"query classify as: {search_table}" + "\n")
+    
+    save_log_infile(filename, classi_log)
+    
+    # print("query classify as:", search_table)
+    
     if search_table == "csv":
+        # Query Extraction
+        is_complete, missing_fields, round_, log_list_extract_csv = question_extraction_csv(query)
+        save_log_infile(filename=filename, content=log_list_extract_csv)
+        if not is_complete:
+            missing_str = ", ".join(missing_fields)
+            missing_return = [f"โปรดเพิ่มให้ครบ ข้อมูลที่ขาดหายไปคือ {missing_str}"]
+            save_log_infile(filename, missing_return)
+            return QueryResponse(response=f"โปรดเพิ่มให้ครบ ข้อมูลที่ขาดหายไปคือ {missing_str}")
         try:
-            response = rag_pipeline_csv(request.query, request.session_id)
+            response = rag_pipeline_csv(query, request.session_id, round_metadata=int(round_), filename=filename)
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
     elif search_table == "txt":
+        round_, log_list_extract_txt = question_extraction_txt(query)
+        save_log_infile(filename=filename, content=log_list_extract_txt)
         try:
-            response = rag_pipeline_txt(request.query, request.session_id)
+            response = rag_pipeline_txt(query, request.session_id, round_metadata=round_, filename=filename)
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
     elif search_table == "not_related":
         try:
-            response = llm_completion(request.query, request.session_id)
+            response = llm_completion(query, request.session_id, filename=filename)
             return QueryResponse(response=response)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))

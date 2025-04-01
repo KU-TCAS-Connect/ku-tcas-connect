@@ -55,7 +55,7 @@ def process_and_insert_data(df, admission_info):
             data = {
                 "id": str(vector_class.uuid_from_time_with_index(datetime.now(), i)),
                 "metadata": {
-                    "admission_round": admission_round,
+                    "admission_round": int(admission_round),
                     "admission_program": admission_program,
                     "reference": reference,
                     "created_at": datetime.now().isoformat(),
@@ -131,12 +131,12 @@ if __name__ == "__main__":
             'reference':"https://admission.ku.ac.th/media/announcements/2024/10/03/68-TCAS1-Sport_1.1.pdf"
         },
         '1-1-ช้างเผือก.txt': {
-            'admission_round': "1/1",
+            'admission_round': "1",
             'admission_program': "ช้างเผือก",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/02/68_TCAS1_White_Elephant_1.1.pdf"
         },
         '1-2-ช้างเผือก.txt': {
-            'admission_round': "1/2",
+            'admission_round': "1",
             'admission_program': "ช้างเผือก",
             'reference': "https://admission.ku.ac.th/media/announcements/2024/10/07/68_TCAS1_White_Elephant_1.2.pdf"
         },
